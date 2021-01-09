@@ -6,7 +6,7 @@
 #######################################################################
 
 # SAGE Replay Reader (SRR)
-# Version: 0.10 (2008-11-02)
+# Version: 0.10.0.1 (2008-11-09)
 # Supporting Tiberium Wars, Kane's Wrath and Red Alert 3 + Beta
 # Thanks to...
 #           ...Quicksilver for GRR source code and inspiration
@@ -109,6 +109,7 @@ function getColor($color, $type)
  * @param string Fraktion ID (Faction ID)
  * @param string C&C Spiel Abk. (C&C game abbr.)
  * @return string KI Persönlichkeit (AI type)
+ * @since 0.10
  */
 function getAIType($aitype, $faction, $type)
 {
@@ -367,8 +368,9 @@ function openReplay($file, $type)
  if(!$fp = fopen($file, 'rb')) return false;
  //"[C&C|RA]3 REPLAY HEADER" lesen (Read header)
  $temp = fread($fp, 18);
- if(strcmp($temp, 'C&C3 REPLAY HEADER') != 0) if(strncmp($temp, 'RA3 REPLAY HEADER', 17) != 0) return false;
- fseek($fp, ($type == 'RA3' ? 18 : 19), SEEK_CUR);
+ if(strcmp($temp, 'C&C3 REPLAY HEADER') == 0) fseek($fp, 19, SEEK_CUR);
+ elseif(strncmp($temp, 'RA3 REPLAY HEADER', 17) == 0) fseek($fp, 18, SEEK_CUR);
+ else return false;
  //Spielname lesen (Read game name)
  $replay['name'] = readBinString($fp);
  fseek($fp, 1, SEEK_CUR);
@@ -446,6 +448,7 @@ function openReplay($file, $type)
  * @param string URL des Replays (URL of the replay)
  * @param string Dateiname des Replays (Filename of the replay)
  * @return mixed Array mit Informationen zum Replay (Array with informations from the replay)
+ * @since 0.8.7
  */
 function streamReplay($replay, $repfile=null)
 {
@@ -480,6 +483,7 @@ function streamReplay($replay, $repfile=null)
  * @param string ID des vBulletin3-Attachments (ID of the vBulletin3-attachment)
  * @param string Dateiname des Replays (Filename of the replay)
  * @return mixed Array mit Informationen zum Replay (Array with informations from the replay)
+ * @since 0.9.10
  */
 function queryReplay($id, $repfile)
 {
