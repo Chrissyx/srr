@@ -5,9 +5,9 @@
 # http://www.chrissyx.de.vu/                                          #
 #######################################################################
 
-# SAGE Replay Reader (SRR) [Tiberium Wars Replay Reader (TWRR)]
-# Version: 0.9.11 (2008-08-20)
-# Supporting Tiberium Wars, Kane's Wrath and Red Alert 3
+# SAGE Replay Reader (SRR)
+# Version: 0.10 (2008-11-02)
+# Supporting Tiberium Wars, Kane's Wrath and Red Alert 3 + Beta
 # Thanks to...
 #           ...Quicksilver for GRR source code and inspiration
 #           ...MerlinSt for helpful hints and code fragments
@@ -17,6 +17,11 @@
 /**
  * Gibt die Partei eines Spielers anhand des gegebenen Wertes zurück.
  * (Returns the faction of a player by the given value.)
+ * 
+ * @author Chrissyx
+ * @param string Fraktion ID (Faction ID)
+ * @param string C&C Spiel Abk. (C&C game abbr.)
+ * @return string Partei (Faction)
  */
 function getFaction($faction, $type)
 {
@@ -25,44 +30,44 @@ function getFaction($faction, $type)
   case 'RA3':
   switch($faction)
   {
-   case -1:
-   case  7: return 'Zufall';
-   case  2: return 'Empire of the Rising Sun';
-   case  3: return 'Kommentator';
-   case  4: return 'Alliierte';     //(Allies)
-   case  8: return 'Sowjets';       //(Soviets)
+   case '-1':
+   case  '7': return 'Zufall';
+   case  '2': return 'Aufgehende Sonne'; //(Rising Sun)
+   case  '3': return 'Kommentator';
+   case  '4': return 'Alliierte';        //(Allies)
+   case  '8': return 'Sowjets';          //(Soviets)
    default: return '<b>UNBEKANNT!</b>';
   }
 
   case 'KW':
   switch($faction)
   {
-   case -1:                         //Menschlicher Spieler mit zufälliger Partei (Human player with random faction)
-   case  1: return 'Zufall';        //CPU Spieler mit zufälliger Partei (AI player with random faction)
-   case  2: return 'Zuschauer';     //(Observer)
-   case  3: return 'Kommentator';   //(Commentator)
-   case  6: return 'GDI';
-   case  7: return 'Steel Talons';
-   case  8: return 'ZOCOM';
-   case  9: return 'Nod';
-   case 10: return 'Schwarze Hand'; //(Black Hand)
-   case 11: return 'Kanes Juenger';  //(The Marked of Kane)
-   case 12: return 'Scrin';
-   case 13: return 'Reaper-17';
-   case 14: return 'Traveler-59';
+   case '-1':                         //Menschlicher Spieler mit zufälliger Partei (Human player with random faction)
+   case  '1': return 'Zufall';        //CPU Spieler mit zufälliger Partei (AI player with random faction)
+   case  '2': return 'Zuschauer';     //(Observer)
+   case  '3': return 'Kommentator';   //(Commentator)
+   case  '6': return 'GDI';
+   case  '7': return 'Steel Talons';
+   case  '8': return 'ZOCOM';
+   case  '9': return 'Nod';
+   case '10': return 'Schwarze Hand'; //(Black Hand)
+   case '11': return 'Kanes Juenger';  //(The Marked of Kane)
+   case '12': return 'Scrin';
+   case '13': return 'Reaper-17';
+   case '14': return 'Traveler-59';
    default: return '<b>UNBEKANNT!</b>';
   }
 
   case 'CNC3':
   switch($faction)
   {
-   case -1:                       //Menschlicher Spieler mit zufälliger Partei (Human player with random faction)
-   case  1: return 'Zufall';      //CPU Spieler mit zufälliger Partei (AI player with random faction)
-   case  2: return 'Zuschauer';   //(Observer)
-   case  3: return 'Kommentator'; //(Commentator)
-   case  6: return 'GDI';
-   case  7: return 'Nod';
-   case  8: return 'Scrin';
+   case '-1':                       //Menschlicher Spieler mit zufälliger Partei (Human player with random faction)
+   case  '1': return 'Zufall';      //CPU Spieler mit zufälliger Partei (AI player with random faction)
+   case  '2': return 'Zuschauer';   //(Observer)
+   case  '3': return 'Kommentator'; //(Commentator)
+   case  '6': return 'GDI';
+   case  '7': return 'Nod';
+   case  '8': return 'Scrin';
    default: return '<b>UNBEKANNT!</b>';
   }
  }
@@ -70,28 +75,86 @@ function getFaction($faction, $type)
 
 /**
  * Gibt die Farbe eines Spielers anhand des gegebenen Wertes zurück.
- * (Returns the color of a player by a given value.)
+ * (Returns the color of a player by the given value.)
+ * 
+ * @author Chrissyx
+ * @param string Farb ID (Color ID)
+ * @param string C&C Spiel Abk. (C&C game abbr.)
+ * @return string Farbe (Color)
  */
-function getColor($color)
+function getColor($color, $type)
 {
  switch($color)
  {
-  case -1: return 'Zufall';   //Keine oder zufällige Farbe (No color or random one)
-  case 0: return 'Blau';      //(Blue)
-  case 1: return 'Gelb';      //(Yellow)
-  case 2: return 'Gruen';      //(Green)
-  case 3: return 'Orange';    //(Orange)
-  case 4: return 'Rosa';      //(Pink)
-  case 5: return 'Lila';      //(Purple)
-  case 6: return 'Rot';       //(Red)
-  case 7: return 'Hellblau';  //(Light blue)
+  case '-1': return 'Zufall';   //Keine oder zufällige Farbe (No color or random one)
+  case '0': return 'Blau';      //(Blue)
+  case '1': return 'Gelb';      //(Yellow)
+  case '2': return 'Gruen';      //(Green)
+  case '3': return 'Orange';    //(Orange)
+  //Diffrent color codes in RA3 and no pink
+  case '4': return ($type == 'RA3') ? 'Lila' : 'Rosa';    //(Purple / Pink)
+  case '5': return ($type == 'RA3') ? 'Rot' : 'Lila';     //(Red / Purple)
+  case '6': return ($type == 'RA3') ? 'Hellblau' : 'Rot'; //(Light blue / Red)
+  case '7': return 'Hellblau';  //(Light blue)
   default: return '<b>UNBEKANNT!</b>';
+ }
+}
+
+/**
+ * Gibt die KI-Persönlichkeit anhand der gegebenen Werte zurück.
+ * (Returns the AI type by the given values.)
+ * 
+ * @author Chrissyx
+ * @param string KI Persönlichkeit ID (AI type ID)
+ * @param string Fraktion ID (Faction ID)
+ * @param string C&C Spiel Abk. (C&C game abbr.)
+ * @return string KI Persönlichkeit (AI type)
+ */
+function getAIType($aitype, $faction, $type)
+{
+ switch($type)
+ {
+  case 'RA3':
+  switch($faction . $aitype)
+  {
+   //Aufgehende Sonne (Rising Sun)
+   case '20': return 'Shinzo';
+   case '21': return 'Kenji';
+   case '22': return 'Naomi';
+   //Alliierte (Allies)
+   case '40': return 'Warren';
+   case '41': return 'Giles';
+   case '42': return 'Lissette';
+   //Sowjets (Soviets)
+   case '80': return 'Oleg';
+   case '81': return 'Moskvin';
+   case '82': return 'Zhana';
+   //Zufall (Random)
+   default: return 'Zufällig';
+  }
+
+  case 'KW':
+  case 'CNC3':
+  switch($aitype)
+  {
+   case '0': return 'Ausgewogen';
+   case '1': return 'Rushen';
+   case '2': return 'Einigeln';
+   case '3': return 'Guerilla';
+   case '4': return 'Dampfwalze';
+   default: return 'Zufällig';
+  }
  }
 }
 
 /**
  * Parst den INI String des Replays und gibt die Werte zurück.
  * (Parse the INI string from the replay and returns the values.)
+ * 
+ * @author Chrissyx
+ * @param string INI File Chunk (INI file chunk)
+ * @param string C&C Spiel Abk. (C&C game abbr.)
+ * @return mixed Array mit den INI Daten (Array with INI data)
  */
 function parseINIString($ini, $type)
 {
@@ -99,7 +162,7 @@ function parseINIString($ini, $type)
  $ini = explode(';', substr($ini, 3, strlen($ini)-4));                   //print_r($ini); //debug
  //Array map format:
  #0 -> mapfilename
- #1 -> MC
+ #1 -> MC => Map CRC?
  #2 -> MS
  #3 -> SD => Seed?
  #4 -> GSID
@@ -124,16 +187,17 @@ function parseINIString($ini, $type)
  #10 -> unknown number? -1
  #11 -> unknown number? -1
  #12 -> unknown number? -1
+ #13 -> RA3 only?
  //Spielart bestimmen (Get game type)
  switch(substr($rules[0], 3))
  {
-  case 1: $iniarray['gametype'] = 'Offline, Gefecht'; break;
-  case 2: $iniarray['gametype'] = 'Offline, LAN'; break;
-  case 3: $iniarray['gametype'] = 'Online, Unranked'; break;
-  case 4: $iniarray['gametype'] = 'Online, Ranked, 1 vs. 1'; break;
-  case 5: $iniarray['gametype'] = 'Online, Ranked, 2 vs. 2'; break;
-  case 6: $iniarray['gametype'] = 'Online, Clan, 1 vs. 1'; break;
-  case 7: $iniarray['gametype'] = 'Online, Clan, 2 vs. 2'; break;
+  case '1': $iniarray['gametype'] = 'Offline, Gefecht'; break;
+  case '2': $iniarray['gametype'] = 'Offline, LAN'; break;
+  case '3': $iniarray['gametype'] = 'Online, Unranked'; break;
+  case '4': $iniarray['gametype'] = 'Online, Ranked, 1 vs. 1'; break;
+  case '5': $iniarray['gametype'] = 'Online, Ranked, 2 vs. 2'; break;
+  case '6': $iniarray['gametype'] = 'Online, Clan, 1 vs. 1'; break;
+  case '7': $iniarray['gametype'] = 'Online, Clan, 2 vs. 2'; break;
   default: $iniarray['gametype'] = '<b>UNBEKANNT!</b>'; break;
  }
  //Spielgeschwindigkeit auslesen (Extract game speed)
@@ -159,13 +223,13 @@ function parseINIString($ini, $type)
   //"Kommentator-Leiche" überspringen (Skip "Commentator-corpse")
   if($player[0] == 'Hpost Commentator') continue;
   // ----- H = Human -----
-  if(strstr(substr($player[0], 0, 1), 'H'))
+  if($player[0][0] == 'H')
   {
    //Human player format:
     #0 -> Tag + Player name
     #1 -> UID: IP in hex, 0=offline game
     #2 -> unknown number?
-    #3 -> Match type (FT=Automatch, TT=Custom match)
+    #3 -> Match type (FT=Automatch / TT, TF=Custom match)
     #4 -> Color: -1=random
     #5 -> Faction: 6=GDI, 7=Nod, 8=Scrin, -1=random / KW: 6=GDI, 7=Steel Talons, 8=ZOCOM, 9=Nod, 13=Reaper-17, 14=Traveler-59 / RA3: 2=Empire 4=Allies, 8=Soviets, 7=random
     #6 -> Map position
@@ -177,8 +241,8 @@ function parseINIString($ini, $type)
    //Spielertyp bestimmen (Get player type)
    switch($player[5])
    {
-    case 2: $playerarray[$i]['playertype'] = (($type == 'RA3') ? 'Spieler' : 'Zuschauer'); break; #TODO! RA3 getFaction & default: 'Spieler'!!
-    case 3: $playerarray[$i]['playertype'] = 'Kommentator'; break;
+    case '2': $playerarray[$i]['playertype'] = (($type == 'RA3') ? 'Spieler' : 'Zuschauer'); break; #TODO! RA3 getFaction & default: 'Spieler'!!
+    case '3': $playerarray[$i]['playertype'] = 'Kommentator'; break;
     default: $playerarray[$i]['playertype'] = 'Spieler'; break;
    }
    //Spielername extrahieren (Extract player name)
@@ -192,7 +256,7 @@ function parseINIString($ini, $type)
    //Spieltyp sichern für später (Save match type for later use)
    $ft = ($player[3] == 'FT') ? true : false;
    //Farbe bestimmen (Get color)
-   $playerarray[$i]['color'] = getColor($player[4]);
+   $playerarray[$i]['color'] = getColor($player[4], $type);
    //Partei bestimmen (Get faction)
    $playerarray[$i]['faction'] = getFaction($player[5], $type);
    //Spielposition bestimmen (Get map position)
@@ -205,7 +269,7 @@ function parseINIString($ini, $type)
    $playerarray[$i]['clan'] = $player[11];
   }
   // ----- C = Computer -----
-  elseif(strstr($player[0], 'C'))
+  elseif($player[0][0] == 'C')
   {
    //CPU player format:
    #0 -> Difficulty: CE = easy, CM = medium, CH = hard, CB = brutal
@@ -226,7 +290,7 @@ function parseINIString($ini, $type)
     default: $playerarray[$i]['diff'] = '<b>UNBEKANNT!</b>'; break;
    }
    //Farbe bestimmen (Get color)
-   $playerarray[$i]['color'] = getColor($player[1]);
+   $playerarray[$i]['color'] = getColor($player[1], $type);
    //Partei bestimmen (Get faction)
    $playerarray[$i]['faction'] = getFaction($player[2], $type);
    //Spielposition bestimmen (Get map position)
@@ -236,18 +300,10 @@ function parseINIString($ini, $type)
    //Handicap
    $playerarray[$i]['handicap'] = $player[5] . '%';
    //KI-Persönlichkeit bestimmen (Get AI type)
-   switch($player[6])
-   {
-    case 0: $playerarray[$i]['aitype'] = 'Ausgewogen'; break;
-    case 1: $playerarray[$i]['aitype'] = 'Rushen'; break;
-    case 2: $playerarray[$i]['aitype'] = 'Einigeln'; break;
-    case 3: $playerarray[$i]['aitype'] = 'Guerilla'; break;
-    case 4: $playerarray[$i]['aitype'] = 'Dampfwalze'; break;
-    default: $playerarray[$i]['aitype'] = 'Zufällig'; break;
-   }
+   $playerarray[$i]['aitype'] = getAIType($player[6], $player[2], $type);
   }
   // ----- X = No player -----
-  elseif(strstr($player[0], 'X'))
+  elseif($player[0][0] == 'X')
    continue; //nothing to do, go on
   // ----- Unbekannter Typ (Unknown player type) -----
   else
@@ -262,9 +318,14 @@ function parseINIString($ini, $type)
 /**
  * Konvertiert einen binären Zahlenstring mit der gegebenen Länge zu einer natürlichen Zahl.
  * (Converts a binary string of numbers with the given length to a natural number.)
+ * 
+ * @param mixed Filepointer oder binärer Zahlenstring (Filepointer or binary string of numbers)
+ * @param int Benötigte Iterationen / Zahlenlänge (Needed iterations / Length of number)
+ * @return Natürliche Zahl (Natural number)
  */
 function conv($var, $anz) //$var kann filepointer oder string sein!
 {
+ if(!$var) return 0;
  for($i=0; $i<$anz; $i++) $erg += ord((is_string($var)) ? substr($var, $i, 1) : fread($var, 1))*pow(256, $i);
  return $erg;
 }
@@ -272,6 +333,10 @@ function conv($var, $anz) //$var kann filepointer oder string sein!
 /**
  * Liest einen binären String bis zum Terminationszeichen.
  * (Reads a binary string until termination character.)
+ * 
+ * @author Chrissyx 
+ * @param mixed Filepointer
+ * @return Zeichenkette (String)
  */
 function readBinString($fp)
 {
@@ -300,17 +365,15 @@ function openReplay($file, $type)
  $replay = array('file' => substr($file, strrpos($file, '/')+1), 'size' => round(filesize($file)/1024) . ' KB');
  //Replay öffnen (Open replay)
  if(!$fp = fopen($file, 'rb')) return false;
- //"C&C3 REPLAY HEADER" lesen (Read header)
- if(strcmp(fread($fp, 18), 'C&C3 REPLAY HEADER') != 0) return false;
- //19 Bytes überspringen (Skip 19 Bytes)
- fseek($fp, 19, SEEK_CUR);
+ //"[C&C|RA]3 REPLAY HEADER" lesen (Read header)
+ $temp = fread($fp, 18);
+ if(strcmp($temp, 'C&C3 REPLAY HEADER') != 0) if(strncmp($temp, 'RA3 REPLAY HEADER', 17) != 0) return false;
+ fseek($fp, ($type == 'RA3' ? 18 : 19), SEEK_CUR);
  //Spielname lesen (Read game name)
  $replay['name'] = readBinString($fp);
- //1 Byte überspringen (Skip 1 Byte)
  fseek($fp, 1, SEEK_CUR);
  //Spielbeschreibung lesen (Read match description)
  $replay['desc'] = readBinString($fp);
- //1 Byte überspringen (Skip 1 Byte)
  fseek($fp, 1, SEEK_CUR);
  //Kartenname lesen (Read mapname)
  $replay['mapname'] = readBinString($fp);
@@ -329,13 +392,12 @@ function openReplay($file, $type)
  }
  //Absichern, dass auch wirklich "M=" erreicht wurde... (Make sure, "M=" is indeed reached...)
  while(fread($fp, 1) != 'M');
- //Zum Datum zurückspringen, da dies eine fixe Position vor dem "M=" hat (Jump back to date, because it has a fixed position before the "M=")
- fseek($fp, -42, SEEK_CUR);
+ //Zum Datum zurückspringen, da dies eine feste Position vor dem "M=" hat (Jump back to date, because it has a fixed position before the "M=")
+ fseek($fp, ($type == 'RA3' ? -40 : -42), SEEK_CUR);
  //Unix Zeitstempel lesen, konvertieren und formatieren (Read, convert and format Unix timestamp)
  $replay['date'] = date('d.m.Y, H:i:s', conv($fp, 4));
-if($type == 'RA3') $replay['date'] = 'n/a'; #TODO RA3 DATUM!!
  //Wieder zum "M=" springen (Jump back to "M=")
- fseek($fp, 39, SEEK_CUR);
+ fseek($fp, ($type == 'RA3' ? 37 : 39), SEEK_CUR);
  //INI File Chunk lesen und parsen (Read and parse INI file chunk)
  $temp = fread($fp, 1);
  while($temp != "\x0")
@@ -367,9 +429,9 @@ if($type == 'RA3') $replay['date'] = 'n/a'; #TODO RA3 DATUM!!
  }
  $replay['version'] = $version;
  //Zum Ende der Datei, ein paar Bytes vor dem Footer (Jump to end of file, a few bytes before the footer)
- fseek($fp, -40, SEEK_END);
+ fseek($fp, -70, SEEK_END);
  //Dauer konvertieren, berechnen und formatieren (Convert, calculate and format length)
- $replay['length'] = date('i:s', (conv(substr(strstr(fread($fp, 40), 'C&C3 REPLAY FOOTER'), 18, 4), 4)/15));
+ $replay['length'] = date('i:s', (conv(substr(strstr(fread($fp, 70), '3 REPLAY FOOTER'), 15, 4), 4)/15));
  //Replay schließen (Close replay)
  fclose($fp);
  //Fertig, Information zurück geben :) (Done, return informations :) )
