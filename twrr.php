@@ -6,7 +6,7 @@
 #######################################################################
 
 # Tiberium Wars Replay Reader (TWRR)
-# Version: 0.9 (2008-02-14)
+# Version: 0.9.1 (2008-02-14)
 # Thanks to...
 #           ...Quicksilver for GRR source code and inspiration
 #           ...MerlinSt for helpful hints and code fragments
@@ -272,6 +272,7 @@ function openReplay($file)
  fseek($fp, 1, SEEK_CUR);
  //Kartenname lesen (Read mapname)
  $replay['mapname'] = readBinString($fp);
+ $replay['picname'] = str_replace("'", "", $replay['mapname']);
  //"FakeMapID", Spielernamen und "CNC3RPL" überspringen (Skip "FakeMapID", player names and "CNC3RPL")
  while ($temp != "\x0\x0\x0\x0") $temp = fread($fp, 4);
  //"M=" suchen (Seek "M=")
