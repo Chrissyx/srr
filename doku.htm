@@ -3,15 +3,21 @@
  <head>
   <title>SAGE Replay Reader</title>
   <meta name="author" content="Chrissyx">
+  <meta name="keywords" content="TWRR, SRR, XML, SAGE, TW, KW, KR, RA3, AR3, RA3 Beta, C&amp;C, Replay, Parser, Reader, Chrissyx, Readme, Doku">
+  <meta name="description" content="Replay-Parser für C&amp;C Spiele auf Basis der XML SAGE Engine">
   <meta name="generator" content="Notepad 4.10.1998">
-  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <meta http-equiv="content-language" content="de">
+  <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
  </head>
  <body>
-  <h1>SAGE Replay Reader V0.10.0.1</h1>
-  Ab V0.9.5 auch mit Support für Kanes Rache!<br>
-  Ab V0.9.10 neue Funktion für vBulletins: <code>queryReplay(replayID, replayName);</code><br>
-  Ab V0.9.11 neuer Name und erster Support für RA3 Beta!<br>
-  Ab V0.10: Voller Support für Alarmstufe Rot 3!<br><br>
+  <h1>SAGE Replay Reader V1.0 RC1</h1>
+  <p>Ein Replay-Parser für C&amp;C Spiele auf Basis der XML SAGE Engine.</p>
+  <ul>
+   <li>Ab V0.9.5 auch mit Support für Kanes Rache!</li>
+   <li>Ab V0.9.10 neue Funktion für vBulletins: <code>queryReplay(replayID, replayName);</code></li>
+   <li>Ab V0.9.11 neuer Name und erster Support für RA3 Beta!</li>
+   <li>Ab V0.10: Voller Support für Alarmstufe Rot 3!</li>
+  </ul>
   <table border="1">
    <tr><th>Eintrag im Array</th><th>Bedeutung</th><th>Erklärung</th></tr>
    <tr><td>$replay[file]</td><td>Dateiname</td><td>Name der Replaydatei mit Endung</td></tr>
@@ -46,8 +52,9 @@
    <tr><td>$replay[ini][players][<i>X</i>][aitype]</td><td>Persönlichkeit</td><td><i>Nur bei Computern:</i> Persönlichkeit der KI</td></tr>
    <tr><td>$replay[ini][matchtype]</td><td>Spieltyp</td><td>Typ des Spiels (Automatch, Eigenes Match)</td></tr>
    <tr><td>$replay[official]</td><td>Offizielle Karte</td><td>Ob eine offizielle Karte verwendet wurde (true, false)</td></tr>
-   <tr><td>$replay[version]</td><td>Version</td><td>Benutzte Version von Tiberium Wars bzw. Kanes Rache</td></tr>
+   <tr><td>$replay[version]</td><td>Version</td><td>Benutzte Version vom jeweiligen C&amp;C Spiel</td></tr>
    <tr><td>$replay[length]</td><td>Dauer</td><td>Länge des Spiels in Minuten (mm:ss)</td></tr>
   </table>
+  <p><a href="http://validator.w3.org/" target="_blank"><img src="http://www.w3.org/Icons/valid-html401" alt="Valid HTML 4.01 Transitional" style="border:none; height:31px; width:88px;"></a></p>
  </body>
 </html>

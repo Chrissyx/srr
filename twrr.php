@@ -1,26 +1,28 @@
 <?php
-#######################################################################
-# Script written by Chrissyx (chris@chrissyx.com)                     #
-# Exclusive for CnC Foren (http://www.cncforen.de/)                   #
-# http://www.chrissyx.de.vu/                                          #
-#######################################################################
-
-# SAGE Replay Reader (SRR)
-# Version: 0.10.0.1 (2008-11-09)
-# Supporting Tiberium Wars, Kane's Wrath and Red Alert 3 + Beta
-# Thanks to...
-#           ...Quicksilver for GRR source code and inspiration
-#           ...MerlinSt for helpful hints and code fragments
-#           ...Lepidosteus for PHP Replay Parser code and algorithms
-
+/**
+ * SAGE Replay Reader (SRR)
+ * 
+ * A replay parser for C&C games based on the XML SAGE engine.<br />
+ * Supporting Tiberium Wars, Kane's Wrath and Red Alert 3 + Beta
+ * 
+ * Thanks to...<br />
+ *           ...Quicksilver for GRR source code and inspiration<br />
+ *           ...MerlinSt for helpful hints and code fragments<br />
+ *           ...Lepidosteus for PHP Replay Parser code and algorithms
+ * 
+ * @author Chrissyx (chris@chrissyx.com)
+ * @copyright Script written exclusive for CnC Foren (http://www.cncforen.de/)
+ * @link http://www.chrissyx.de.vu/
+ * @package SRR
+ * @version 1.0 RC1 (2009-01-12)
+ */
 
 /**
- * Gibt die Partei eines Spielers anhand des gegebenen Wertes zurück.
+ * Gibt die Partei eines Spielers anhand des gegebenen Wertes zurück.<br />
  * (Returns the faction of a player by the given value.)
  * 
- * @author Chrissyx
- * @param string Fraktion ID (Faction ID)
- * @param string C&C Spiel Abk. (C&C game abbr.)
+ * @param string $faction Fraktion ID (Faction ID)
+ * @param string $type C&C Spiel Abk. (C&C game abbr.)
  * @return string Partei (Faction)
  */
 function getFaction($faction, $type)
@@ -32,8 +34,9 @@ function getFaction($faction, $type)
   {
    case '-1':
    case  '7': return 'Zufall';
+   case  '1': return 'Zuschauer';        //(Observer)
    case  '2': return 'Aufgehende Sonne'; //(Rising Sun)
-   case  '3': return 'Kommentator';
+   case  '3': return 'Kommentator';      //(Commentator)
    case  '4': return 'Alliierte';        //(Allies)
    case  '8': return 'Sowjets';          //(Soviets)
    default: return '<b>UNBEKANNT!</b>';
@@ -74,12 +77,11 @@ function getFaction($faction, $type)
 }
 
 /**
- * Gibt die Farbe eines Spielers anhand des gegebenen Wertes zurück.
+ * Gibt die Farbe eines Spielers anhand des gegebenen Wertes zurück.<br />
  * (Returns the color of a player by the given value.)
  * 
- * @author Chrissyx
- * @param string Farb ID (Color ID)
- * @param string C&C Spiel Abk. (C&C game abbr.)
+ * @param string $color Farb ID (Color ID)
+ * @param string $type C&C Spiel Abk. (C&C game abbr.)
  * @return string Farbe (Color)
  */
 function getColor($color, $type)
@@ -87,27 +89,26 @@ function getColor($color, $type)
  switch($color)
  {
   case '-1': return 'Zufall';   //Keine oder zufällige Farbe (No color or random one)
-  case '0': return 'Blau';      //(Blue)
-  case '1': return 'Gelb';      //(Yellow)
-  case '2': return 'Gruen';      //(Green)
-  case '3': return 'Orange';    //(Orange)
+  case  '0': return 'Blau';      //(Blue)
+  case  '1': return 'Gelb';      //(Yellow)
+  case  '2': return 'Gruen';      //(Green)
+  case  '3': return 'Orange';    //(Orange)
   //Diffrent color codes in RA3 and no pink
-  case '4': return ($type == 'RA3') ? 'Lila' : 'Rosa';    //(Purple / Pink)
-  case '5': return ($type == 'RA3') ? 'Rot' : 'Lila';     //(Red / Purple)
-  case '6': return ($type == 'RA3') ? 'Hellblau' : 'Rot'; //(Light blue / Red)
-  case '7': return 'Hellblau';  //(Light blue)
+  case  '4': return ($type == 'RA3') ? 'Lila' : 'Rosa';    //(Purple / Pink)
+  case  '5': return ($type == 'RA3') ? 'Rot' : 'Lila';     //(Red / Purple)
+  case  '6': return ($type == 'RA3') ? 'Hellblau' : 'Rot'; //(Light blue / Red)
+  case  '7': return 'Hellblau';  //(Light blue)
   default: return '<b>UNBEKANNT!</b>';
  }
 }
 
 /**
- * Gibt die KI-Persönlichkeit anhand der gegebenen Werte zurück.
+ * Gibt die KI-Persönlichkeit anhand der gegebenen Werte zurück.<br />
  * (Returns the AI type by the given values.)
  * 
- * @author Chrissyx
- * @param string KI Persönlichkeit ID (AI type ID)
- * @param string Fraktion ID (Faction ID)
- * @param string C&C Spiel Abk. (C&C game abbr.)
+ * @param string $aitype KI Persönlichkeit ID (AI type ID)
+ * @param string $faction Fraktion ID (Faction ID)
+ * @param string $type C&C Spiel Abk. (C&C game abbr.)
  * @return string KI Persönlichkeit (AI type)
  * @since 0.10
  */
@@ -149,12 +150,11 @@ function getAIType($aitype, $faction, $type)
 }
 
 /**
- * Parst den INI String des Replays und gibt die Werte zurück.
+ * Parst den INI String des Replays und gibt die Werte zurück.<br />
  * (Parse the INI string from the replay and returns the values.)
  * 
- * @author Chrissyx
- * @param string INI File Chunk (INI file chunk)
- * @param string C&C Spiel Abk. (C&C game abbr.)
+ * @param string $ini INI File Chunk (INI file chunk)
+ * @param string $type C&C Spiel Abk. (C&C game abbr.)
  * @return mixed Array mit den INI Daten (Array with INI data)
  */
 function parseINIString($ini, $type)
@@ -240,17 +240,20 @@ function parseINIString($ini, $type)
    #10 -> unknown number?
    #11 -> Clan tag
    //Spielertyp bestimmen (Get player type)
-   switch($player[5])
+   $playerarray[$i]['playertype'] = ($player[5] == '1' && $type == 'RA3') || ($player[5] == '2' && $type != 'RA3') || ($player[5] == '3') ? getFaction($player[5], $type) : 'Spieler';
+   /*switch($player[5])
    {
+    case '1': $playerarray[$i]['playertype'] = (($type == 'RA3') ? 'Zuschauer' : 'Spieler'); break;
     case '2': $playerarray[$i]['playertype'] = (($type == 'RA3') ? 'Spieler' : 'Zuschauer'); break; #TODO! RA3 getFaction & default: 'Spieler'!!
     case '3': $playerarray[$i]['playertype'] = 'Kommentator'; break;
     default: $playerarray[$i]['playertype'] = 'Spieler'; break;
-   }
+   }*/
    //Spielername extrahieren (Extract player name)
    $playerarray[$i]['playername'] = substr($player[0], 1);
    //IP Adresse bestimmen (Get IP adress)
    if($player[1] != '0')
    {
+    $playerarray[$i]['ip'] = '';
     for($j=0; $j<8; $j+=2) $playerarray[$i]['ip'] .= hexdec(substr($player[1], $j, 2)) . '.';
     $playerarray[$i]['ip'] = substr($playerarray[$i]['ip'], 0, -1);
    }
@@ -317,31 +320,32 @@ function parseINIString($ini, $type)
 }
 
 /**
- * Konvertiert einen binären Zahlenstring mit der gegebenen Länge zu einer natürlichen Zahl.
+ * Konvertiert einen binären Zahlenstring mit der gegebenen Länge zu einer natürlichen Zahl.<br />
  * (Converts a binary string of numbers with the given length to a natural number.)
  * 
- * @param mixed Filepointer oder binärer Zahlenstring (Filepointer or binary string of numbers)
- * @param int Benötigte Iterationen / Zahlenlänge (Needed iterations / Length of number)
- * @return Natürliche Zahl (Natural number)
+ * @param mixed $var Filepointer oder binärer Zahlenstring (Filepointer or binary string of numbers)
+ * @param int $anz Benötigte Iterationen / Zahlenlänge (Needed iterations / Length of number)
+ * @return int Natürliche Zahl (Natural number)
  */
 function conv($var, $anz) //$var kann filepointer oder string sein!
 {
  if(!$var) return 0;
+ $erg = 0;
  for($i=0; $i<$anz; $i++) $erg += ord((is_string($var)) ? substr($var, $i, 1) : fread($var, 1))*pow(256, $i);
  return $erg;
 }
 
 /**
- * Liest einen binären String bis zum Terminationszeichen.
+ * Liest einen binären String bis zum Terminationszeichen.<br />
  * (Reads a binary string until termination character.)
  * 
- * @author Chrissyx 
- * @param mixed Filepointer
- * @return Zeichenkette (String)
+ * @param mixed $fp Filepointer
+ * @return string Zeichenkette (String)
  */
 function readBinString($fp)
 {
  $temp = fgetc($fp);
+ $name = '';
  while($temp != "\x0")
  {
   $name .= $temp;
@@ -352,12 +356,11 @@ function readBinString($fp)
 }
 
 /**
- * Öffnet eine Replaydatei und gibt die enthaltenen Informationen als Array zurück.
+ * Öffnet eine Replaydatei und gibt die enthaltenen Informationen als Array zurück.<br />
  * (Opens a replay file and returns the contained informations as an array.)
  * 
- * @author Chrissyx
- * @param string Die Replaydatei (The replayfile)
- * @param string Spieltyp aus der Endung des Replays (Gametype from the ending of the replay)
+ * @param string $file Die Replaydatei (The replayfile)
+ * @param string $type Spieltyp aus der Endung des Replays (Gametype from the ending of the replay)
  * @return mixed Array mit Informationen zum Replay (Array with informations from the replay)
  */
 function openReplay($file, $type)
@@ -402,6 +405,7 @@ function openReplay($file, $type)
  fseek($fp, ($type == 'RA3' ? 37 : 39), SEEK_CUR);
  //INI File Chunk lesen und parsen (Read and parse INI file chunk)
  $temp = fread($fp, 1);
+ $ini = '';
  while($temp != "\x0")
  {
   $ini .= $temp;
@@ -434,19 +438,19 @@ function openReplay($file, $type)
  fseek($fp, -70, SEEK_END);
  //Dauer konvertieren, berechnen und formatieren (Convert, calculate and format length)
  $replay['length'] = date('i:s', (conv(substr(strstr(fread($fp, 70), '3 REPLAY FOOTER'), 15, 4), 4)/15));
+ if($replay['length'] == '00:00') $replay['length'] = 'n/a';
  //Replay schließen (Close replay)
  fclose($fp);
- //Fertig, Information zurück geben :) (Done, return informations :) )
+ //Fertig, Information zurück geben :) (Done, return informations :))
  return $replay;
 }
 
 /**
- * Speichert temporär ein Replay von einer externen Quelle lokal ab, während die Infos ausgelesen werden.
+ * Speichert temporär ein Replay von einer externen Quelle lokal ab, während die Infos ausgelesen werden.<br />
  * (Saves temporary a replay from an extarnal source locally, while the informations are retrieved.)
  * 
- * @author Chrissyx
- * @param string URL des Replays (URL of the replay)
- * @param string Dateiname des Replays (Filename of the replay)
+ * @param string $replay URL des Replays (URL of the replay)
+ * @param string $repfile Dateiname des Replays (Filename of the replay)
  * @return mixed Array mit Informationen zum Replay (Array with informations from the replay)
  * @since 0.8.7
  */
@@ -476,19 +480,18 @@ function streamReplay($replay, $repfile=null)
 }
 
 /**
- * Liest ein Replay auf der vBulletin3-Datenbank aus und speichert es temporär ab, während die Infos ausgelesen werden.
+ * Liest ein Replay auf der vBulletin3-Datenbank aus und speichert es temporär ab, während die Infos ausgelesen werden.<br />
  * (Reads a replay from the vBulletin3-database and saves it temporary, while the informations are retrieved.)
  * 
- * @author Chrissyx
- * @param string ID des vBulletin3-Attachments (ID of the vBulletin3-attachment)
- * @param string Dateiname des Replays (Filename of the replay)
+ * @param string $id ID des vBulletin3-Attachments (ID of the vBulletin3-attachment)
+ * @param string $repfile Dateiname des Replays (Filename of the replay)
  * @return mixed Array mit Informationen zum Replay (Array with informations from the replay)
  * @since 0.9.10
  */
 function queryReplay($id, $repfile)
 {
  //Spiel bestimmen (Detect game)
- if(!preg_match("/.*?\.(\w+?)Replay$/", $repfile, $type)) return false;
+ if(!preg_match("/.*?\.(\w+?)Replay$/i", $repfile, $type)) return false;
  //Temporäre Datei zum Schreiben anlegen (Create temp file for writing)
  $repfile = tempnam('tmp', $repfile);
  //vBulletin3-DB Objekt holen (Provide vBulletin3-DB object)
@@ -505,7 +508,7 @@ function queryReplay($id, $repfile)
  //Replay aus vBulletin3-Datenbank lesen und lokal speichern [PHP5] (Get replay from vBulletin3-database and save local [PHP5])
  else file_put_contents($repfile, array_shift($db->query_first('SELECT filedata FROM ' . TABLE_PREFIX . 'attachment WHERE attachmentid = ' . intval($id))));
  //Infos auslesen (Read infos)
- $replay = openReplay($repfile, $type[1]);
+ $replay = openReplay($repfile, strtoupper($type[1]));
  //Replay wieder löschen (Finally delete replay)
  unlink($repfile);
  //Infos zurückgeben (Return infos)
