@@ -1,0 +1,48 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="de">
+ <head>
+  <title>Tiberium Wars Replay Reader</title>
+  <meta name="author" content="Chrissyx">
+  <meta name="generator" content="Notepad 4.10.1998">
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+ </head>
+ <body>
+  <h1>Tiberium Wars Replay Reader V0.9</h1>
+  <table border="1">
+   <tr><th>Eintrag im Array</th><th>Bedeutung</th><th>Erklärung</th></tr>
+   <tr><td>$replay[file]</td><td>Dateiname</td><td>Name der Replaydatei mit Endung</td></tr>
+   <tr><td>$replay[size]</td><td>Größe</td><td>Größe der Replaydatei in KB</td></tr>
+   <tr><td>$replay[name]</td><td>Spielname</td><td>Name des Spiels</td></tr>
+   <tr><td>$replay[desc]</td><td>Spielbeschreibung</td><td>Beschreibung des Spiels</td></tr>
+   <tr><td>$replay[mapname]</td><td>Kartenname</td><td>Name der gespielten Karte</td></tr>
+   <tr><td>$replay[date]</td><td>Datum</td><td>Datum und Uhrzeit, wann das Spiel stattfand (dd.mm.yyyy, hh:mm:ss)</td></tr>
+   <tr><td>$replay[ini]</td><td>INI File Chunk</td><td><b>ARRAY</b> mit weiteren Angaben</td></tr>
+   <tr><td>$replay[ini][mapfilename]</td><td>Dateiname Karte</td><td>Pfad und Dateiname der Karte ohne Endung</td></tr>
+   <tr><td>$replay[ini][gametype]</td><td>Spielart</td><td>Beinhaltet mehrere Angaben zur Art des Spiels (Offline, Online, Unranked, Ranked, Clan, 1 vs. 1, 2 vs. 2)</td></tr>
+   <tr><td>$replay[ini][gamespeed]</td><td>Spielgeschwindigkeit</td><td>Spielgeschwindigkeit in Prozent</td></tr>
+   <tr><td>$replay[ini][startcash]</td><td>Startgeld</td><td>Startgeld in Dollar</td></tr>
+   <tr><td>$replay[ini][bc]</td><td>BattleCasted</td><td>Ob das Spiel über BattleCast veröffentlicht wurde (Ja, Nein)</td></tr>
+   <tr><td>$replay[ini][voip]</td><td>VoIP</td><td>Ob Voice over IP aktiviert war (Ja, Nein)</td></tr>
+   <tr><td>$replay[ini][delay]</td><td>BattleCast Delay</td><td>Aufnahmeverzögerung bei BattleCast-Spielen in Minuten</td></tr>
+   <tr><td>$replay[ini][crates]</td><td>Kisten</td><td>Ob Kisten aktiviert waren (Ja, Nein)</td></tr>
+   <tr><td>$replay[ini][players]</td><td>Spieler</td><td><b>ARRAY</b> mit Angaben über alle Beteiligten</td></tr>
+   <tr><td>$replay[ini][players][<i>X</i>]</td><td>Spieler <i>X</i></td><td><b>ARRAY</b> mit Angaben zu den <i>X</i>. Teilnehmer. <i>X</i> geht von 1 bis maximal 8, wobei die Nummerierung nicht durchgehend sein muss!</td></tr>
+   <tr><td>$replay[ini][players][<i>X</i>][playertype]</td><td>Spielertyp</td><td>Typ des Teilnehmers (Zuschauer, Kommentator, Spieler, Computer)</td></tr>
+   <tr><td>$replay[ini][players][<i>X</i>][playername]</td><td>Spielername</td><td><i>Nur bei menschlichen Teilnehmern:</i> Name des Teilnehmern</td></tr>
+   <tr><td>$replay[ini][players][<i>X</i>][ip]</td><td>IP</td><td><i>Nur bei menschlichen -online- Teilnehmern:</i> IP Adresse des Teilnehmers</td></tr>
+   <tr><td>$replay[ini][players][<i>X</i>][color]</td><td>Farbe</td><td>Farbe des Mitspielers</td></tr>
+   <tr><td>$replay[ini][players][<i>X</i>][faction]</td><td>Partei</td><td>Partei des Mitspielers</td></tr>
+   <tr><td>$replay[ini][players][<i>X</i>][mappos]</td><td>Position</td><td>Position auf der Karte</td></tr>
+   <tr><td>$replay[ini][players][<i>X</i>][team]</td><td>Team</td><td>Teamnummer des Mitspielers</td></tr>
+   <tr><td>$replay[ini][players][<i>X</i>][handicap]</td><td>Handicap</td><td>Handicap des Mitspielers in Prozent</td></tr>
+   <tr><td>$replay[ini][players][<i>X</i>][clan]</td><td>Clantag</td><td><i>Nur bei menschlichen Teilnehmern:</i> Clankürzel, wenn vorhanden</td></tr>
+   <tr><td>$replay[ini][players][<i>X</i>][diff]</td><td>Schwierigkeit</td><td><i>Nur bei Computern:</i> Schwierigkeitsstufe der KI</td></tr>
+   <tr><td>$replay[ini][players][<i>X</i>][aitype]</td><td>Persönlichkeit</td><td><i>Nur bei Computern:</i> Persönlichkeit der KI</td></tr>
+   <tr><td>$replay[ini][matchtype]</td><td>Spieltyp</td><td>Typ des Spiels (Automatch, Eigenes Match)</td></tr>
+   <tr><td>$replay[official]</td><td>Offizielle Karte</td><td>Ob eine offizielle Karte verwendet wurde (true, false)</td></tr>
+   <tr><td>$replay[version]</td><td>Version</td><td>Benutzte Version von Tiberium Wars</td></tr>
+   <tr><td>$replay[length]</td><td>Dauer</td><td>Länge des Spiels in Minuten (mm:ss)</td></tr>
+  </table>
+ </body>
+</html>

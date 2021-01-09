@@ -6,8 +6,11 @@
 #######################################################################
 
 # Tiberium Wars Replay Reader (TWRR)
-# Version: 0.8.7 (2008-01-18)
-# Thanks to Quicksilver for GRR source code and inspiration
+# Version: 0.9 (2008-02-14)
+# Thanks to...
+#           ...Quicksilver for GRR source code and inspiration
+#           ...MerlinSt for helpful hints and code fragments
+#           ...Lepidosteus for PHP Replay Parser code and algorithms
 
 
 #
@@ -18,10 +21,10 @@ function getFaction($faction)
 {
  switch ($faction)
  {
-  case -1:                   //Menschlicher Spieler mit zufälliger Partei (Human player with random faction)
-  case 1: return "Zufällig"; //CPU Spieler mit zufälliger Partei (AI player with random faction)
-  case 2:                    //Bedeutet Zuschauer (Indicates observer)
-  case 3: return "-";        //Bedeutet Kommentator (Indicates commentator)
+  case -1:                      //Menschlicher Spieler mit zufälliger Partei (Human player with random faction)
+  case 1: return "Zufall";      //CPU Spieler mit zufälliger Partei (AI player with random faction)
+  case 2: return "Zuschauer";   //(Observer)
+  case 3: return "Kommentator"; //(Commentator)
   case 6: return "GDI";
   case 7: return "Nod";
   case 8: return "Scrin";
@@ -37,7 +40,7 @@ function getColor($color)
 {
  switch ($color)
  {
-  case -1: return "Zufällig"; //Keine oder zufällige Farbe (No color or random one)
+  case -1: return "Zufall";   //Keine oder zufällige Farbe (No color or random one)
   case 0: return "Blau";      //(Blue)
   case 1: return "Gelb";      //(Yellow)
   case 2: return "Grün";      //(Green)
@@ -62,11 +65,11 @@ function parseINIString($ini)
  #0 -> mapfilename
  #1 -> MC
  #2 -> MS
- #3 -> SD
+ #3 -> SD => Seed?
  #4 -> GSID
  #5 -> GT
- #6 -> PC => Player Counter? //$pc = substr($ini[6], 3);
- #7 -> RU => Rules? (Starting cash, game speed, random crates, etc.)
+ #6 -> PC => Player Counter? Post Commentator? //$pc = substr($ini[6], 3);
+ #7 -> RU => Rules (Starting cash, game speed, random crates, etc.)
  #8 -> S => All participants, seperated by ":"
  $iniarray['mapfilename'] = $ini[0];
  //Spielregeln verarbeiten (Process rules)
@@ -77,7 +80,7 @@ function parseINIString($ini)
   #2 -> Starting cash
   #3 -> BattleCasted?
   #4 -> VoIP?
-  #5 -> unknown number? 0? 10? 255?
+  #5 -> BattleCast delay, minutes
   #6 -> Random crates
   #7 -> unknown number?
   #8 -> unknown number? -1
@@ -101,10 +104,12 @@ function parseINIString($ini)
  $iniarray['gamespeed'] = $rules[1] . "%";
  //Startgeld auslesen (Extract starting cash)
  $iniarray['startcash'] = $rules[2] . "\$";
- //VoIP?
- $iniarray['voip'] = ($rules[4] == 1) ? "Ja" : "Nein";
  //BattleCast bestimmen (Detect BattleCast)
  $iniarray['bc'] = ($rules[3] == "1") ? "Ja" : "Nein";
+ //VoIP
+ $iniarray['voip'] = ($rules[4] == "1") ? "Ja" : "Nein";
+ //BattleCast Aufnahmeverzögerung (BattleCast delay)
+ $iniarray['delay'] = $rules[5] . " Minuten";
  //Zufallskisten bestimmen (Detect random crates)
  $iniarray['crates'] = ($rules[6] == "0") ? "Nein" : "Ja";
  //Weiter mit INI Eintrag 8 (Proceed with INI entry 8)
@@ -121,14 +126,14 @@ function parseINIString($ini)
   {
    //Human player format:
     #0 -> Tag + Player name
-    #1 -> some unknown ID? 0=offline game
+    #1 -> UID: IP in hex, 0=offline game
     #2 -> unknown number?
     #3 -> Match type (FT=Automatch, TT=Custom match)
     #4 -> Color: -1=random
     #5 -> Faction: 6=GDI, 7=Nod, 8=Scrin, -1=random
     #6 -> Map position
     #7 -> Team number
-    #8 -> unknown number?
+    #8 -> Handicap?
     #9 -> unknown number?
    #10 -> unknown number?
    #11 -> Clan tag
@@ -141,6 +146,12 @@ function parseINIString($ini)
    }
    //Spielername extrahieren (Extract player name)
    $playerarray[$i]['playername'] = substr($player[0], 1, strlen($player[0])-1);
+   //IP Adresse bestimmen (Get IP adress)
+   if ($player[1] > 0)
+   {
+    for ($j=0; $j<8; $j+=2) $playerarray[$i]['ip'] .= hexdec(substr($player[1], $j, 2)) . ".";
+    $playerarray[$i]['ip'] = substr($playerarray[$i]['ip'], 0, -1);
+   }
    //Spieltyp sichern für später (Save match type for later use)
    $ft = ($player[3] == "FT") ? true : false;
    //Farbe bestimmen (Get color)
@@ -150,7 +161,9 @@ function parseINIString($ini)
    //Spielposition bestimmen (Get map position)
    $playerarray[$i]['mappos'] = ($player[6] == "-1") ? "Zufällig" : ($player[6]+1);
    //Team bestimmen (Get team)
-   $playerarray[$i]['team'] = ($player[7] != -1) ? ($player[7]+1) : "-";
+   $playerarray[$i]['team'] = ($player[7] != "-1") ? ($player[7]+1) : "-";
+   //Handicap
+   $playerarray[$i]['handicap'] = (($player[8] == "-1") ? "0" : $player[8]) . "%";
    //Clan tag
    $playerarray[$i]['clan'] = $player[11];
   }
@@ -210,6 +223,16 @@ function parseINIString($ini)
 }
 
 #
+# Konvertiert einen binären Zahlenstring mit der gegebenen Länge zu einer natürlichen Zahl.
+# (Converts a binary string of numbers with the given length to a natural number.)
+#
+function conv($fp, $anz)
+{
+ for ($i=0; $i<$anz; $i++) $erg += ord(fread($fp, 1))*pow(256, $i);
+ return $erg;
+}
+
+#
 # Liest einen binären String bis zum Terminationszeichen.
 # (Reads a binary string until termination character.)
 #
@@ -231,8 +254,8 @@ function readBinString($fp)
 #
 function openReplay($file)
 {
- //Dateiname und Größe in Kilobytes (Replay filename and size in kilobytes)
- $replay = array('file' => $file, 'size' => round(filesize($file)/1024) . " KB");
+ //Dateiname (ohne Ordner) und Größe in Kilobytes (Replay filename (without folder) and size in kilobytes)
+ $replay = array('file' => substr($file, strpos($file, "/")+1), 'size' => round(filesize($file)/1024) . " KB");
  //Replay öffnen (Open replay)
  if (!$fp = fopen($file, "r")) return false;
  //"C&C3 REPLAY HEADER" lesen (Read header)
@@ -262,8 +285,12 @@ function openReplay($file)
  }
  //Absichern, dass auch wirklich "M=" erreicht wurde... (Make sure, "M=" is indeed reached...)
  while (fread($fp, 1) != "M");
- //Ansonsten Filepointer wieder richtig positionieren (Otherwise set filepointer at right position)
- fseek($fp, 1, SEEK_CUR);
+ //Zum Datum zurückspringen, da dies eine fixe Position vor dem "M=" hat (Jump back to date, because it has a fixed position before the "M=")
+ fseek($fp, -42, SEEK_CUR);
+ //Unix Zeitstempel lesen, konvertieren und formatieren (Read, convert and format Unix timestamp)
+ $replay['date'] = date("d.m.Y, H:i:s", conv($fp, 4));
+ //Wieder zum "M=" springen (Jump back to "M=")
+ fseek($fp, 39, SEEK_CUR);
  //INI File Chunk lesen und parsen (Read and parse INI file chunk)
  $temp = fread($fp, 1);
  while ($temp != "\x0")
@@ -272,6 +299,7 @@ function openReplay($file)
   $temp = fread($fp, 1);
  }
  $replay['ini'] = parseINIString($ini);
+ $replay['official'] = (stristr($replay['ini']['mapfilename'], "official")) ? true : false;
  //Weitere Sachen überspringen und Versionsnummer suchen (Skip some things and search version number)
  do
  {
@@ -293,6 +321,10 @@ function openReplay($file)
   $temp = fread($fp, 1);
  }
  $replay['version'] = $version;
+ //Zum Ende der Datei, genau hinter dem Footer (Jump to end of file, just behind the footer)
+ fseek($fp, -14, SEEK_END);
+ //Dauer konvertieren, berechnen und formatieren (Convert, calculate and format length)
+ $replay['length'] = date("i:s", (conv($fp, 4)/15));
  //Replay schließen (Close replay)
  fclose($fp);
  //Fertig, Information zurück geben :) (Done, return informations :) )
@@ -300,15 +332,24 @@ function openReplay($file)
 }
 
 #
-# Speichert temporär ein Replay von einer externen Quelle lokal ab, während die Infos ausgelesen werden.
-# (Saves temporary a replay from an extarnal source locally, while the informations are retrieved.)
+# Speichert temporär ein Replay von einer externen Quelle lokal ab, während die Infos ausgelesen werden. Ordner tmp muss existieren!
+# (Saves temporary a replay from an extarnal source locally, while the informations are retrieved. Folder tmp has to exist!)
 #
 function streamReplay($replay, $repfile="")
 {
  //Bombensicherer Name (100% not assigned name)
- $repfile = ($repfile && !file_exists($repfile)) ? $repfile : strtr(microtime(), array(" " => "", "." => ""))  . ".CNC3Replay";
- //Datei holen und lokal speichern (Get file and save local)
- file_put_contents($repfile, file_get_contents($replay));
+ $repfile = "tmp/" . (($repfile && !file_exists("tmp/" . $repfile)) ? $repfile : strtr(microtime(), array(" " => "", "." => ""))  . ".CNC3Replay");
+ //Falls eine ältere PHP Version als 5.0 vorliegt, dürfen nur PHP4 Funktionen benutzt werden (In case of an older PHP version than 5.0, only use PHP4 functions)
+ if (substr(phpversion(), 0, 1) < 5)
+ {
+  //Datei zum binär-schreiben öffnen (Open file for binary write)
+  $fp = fopen($repfile, "wb");
+  //Datei holen und lokal speichern [PHP4] (Get file and save local [PHP4])
+  fwrite($fp, file_get_contents($replay));
+  fclose($fp);
+ }
+ //Datei holen und lokal speichern [PHP5] (Get file and save local [PHP5])
+ else file_put_contents($repfile, file_get_contents($replay));
  //Infos auslesen (Read infos)
  $replay = openReplay($repfile);
  //Replay wieder löschen (Finally delete replay)
