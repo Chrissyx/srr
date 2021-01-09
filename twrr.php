@@ -3,18 +3,18 @@
  * SAGE Replay Reader (SRR)
  * 
  * A replay parser for C&C games based on the XML SAGE engine.<br />
- * Supporting Tiberium Wars, Kane's Wrath and Red Alert 3 + Beta
+ * Supporting Tiberium Wars, Kane's Wrath, Red Alert 3 + Beta and Uprising
  * 
  * Thanks to...<br />
  *           ...Quicksilver for GRR source code and inspiration<br />
  *           ...MerlinSt for helpful hints and code fragments<br />
  *           ...Lepidosteus for PHP Replay Parser code and algorithms
  * 
- * @author Chrissyx (chris@chrissyx.com)
- * @copyright Script written exclusive for CnC Foren (http://www.cncforen.de/)
+ * @author Chrissyx <chris@chrissyx.com>
+ * @copyright Script written exclusively for CnC Foren (http://www.cncforen.de/)
  * @link http://www.chrissyx.de.vu/
  * @package SRR
- * @version 1.0 RC1 (2009-01-12)
+ * @version 1.0 RC2 (2009-08-10)
  */
 
 /**
@@ -29,6 +29,19 @@ function getFaction($faction, $type)
 {
  switch($type)
  {
+  case 'RA3U':
+  switch($faction)
+  {
+   case '-1':
+   case  '8': return 'Zufall';
+   case  '1': return 'Zuschauer';        //(Observer)
+   case  '3': return 'Aufgehende Sonne'; //(Rising Sun)
+   //Commentator??
+   case  '5': return 'Alliierte';        //(Allies)
+   case  '9': return 'Sowjets';          //(Soviets)
+   default: return '<b>UNBEKANNT!</b>';
+  }
+
   case 'RA3':
   switch($faction)
   {
@@ -116,6 +129,25 @@ function getAIType($aitype, $faction, $type)
 {
  switch($type)
  {
+  case 'RA3U':
+  switch($faction . $aitype)
+  {
+   //Aufgehende Sonne (Rising Sun)
+   case '30': return 'Hinterhaltsexperte';
+   case '31': return 'Mecha-Kriegführung';
+   case '32': return 'Flottenkommandant';
+   //Alliierte (Allies)
+   case '50': return 'Direkter Angriff';
+   case '51': return 'Geschwaderführer';
+   case '52': return 'Special Forces';
+   //Sowjets (Soviets)
+   case '90': return 'Schwere Panzer';
+   case '91': return 'Schockspezialist';
+   case '92': return 'Luftwaffenheldin';
+   //Zufall (Random)
+   default: return 'Zufällig';
+  }
+
   case 'RA3':
   switch($faction . $aitype)
   {
@@ -240,7 +272,7 @@ function parseINIString($ini, $type)
    #10 -> unknown number?
    #11 -> Clan tag
    //Spielertyp bestimmen (Get player type)
-   $playerarray[$i]['playertype'] = ($player[5] == '1' && $type == 'RA3') || ($player[5] == '2' && $type != 'RA3') || ($player[5] == '3') ? getFaction($player[5], $type) : 'Spieler';
+   $playerarray[$i]['playertype'] = ($player[5] == '1' && substr($type, 0, 3) == 'RA3') || ($player[5] == '2' && $type != 'RA3') || ($player[5] == '3') ? getFaction($player[5], $type) : 'Spieler';
    /*switch($player[5])
    {
     case '1': $playerarray[$i]['playertype'] = (($type == 'RA3') ? 'Zuschauer' : 'Spieler'); break;
@@ -250,7 +282,7 @@ function parseINIString($ini, $type)
    }*/
    //Spielername extrahieren (Extract player name)
    $playerarray[$i]['playername'] = substr($player[0], 1);
-   //IP Adresse bestimmen (Get IP adress)
+   //IP Adresse bestimmen (Get IP address)
    if($player[1] != '0')
    {
     $playerarray[$i]['ip'] = '';
@@ -398,11 +430,11 @@ function openReplay($file, $type)
  //Absichern, dass auch wirklich "M=" erreicht wurde... (Make sure, "M=" is indeed reached...)
  while(fread($fp, 1) != 'M');
  //Zum Datum zurückspringen, da dies eine feste Position vor dem "M=" hat (Jump back to date, because it has a fixed position before the "M=")
- fseek($fp, ($type == 'RA3' ? -40 : -42), SEEK_CUR);
+ fseek($fp, (substr($type, 0, 3) == 'RA3' ? -40 : -42), SEEK_CUR);
  //Unix Zeitstempel lesen, konvertieren und formatieren (Read, convert and format Unix timestamp)
  $replay['date'] = date('d.m.Y, H:i:s', conv($fp, 4));
  //Wieder zum "M=" springen (Jump back to "M=")
- fseek($fp, ($type == 'RA3' ? 37 : 39), SEEK_CUR);
+ fseek($fp, (substr($type, 0, 3) == 'RA3' ? 37 : 39), SEEK_CUR);
  //INI File Chunk lesen und parsen (Read and parse INI file chunk)
  $temp = fread($fp, 1);
  $ini = '';
