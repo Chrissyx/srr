@@ -6,7 +6,7 @@
 #######################################################################
 
 # Tiberium Wars Replay Reader (TWRR)
-# Version: 0.9.5 (2008-03-29)
+# Version: 0.9.6 (2008-04-12)
 # Thanks to...
 #           ...Quicksilver for GRR source code and inspiration
 #           ...MerlinSt for helpful hints and code fragments
@@ -23,31 +23,31 @@ function getFaction($faction, $kw)
   switch ($faction)
   {
    case -1:                         //Menschlicher Spieler mit zufälliger Partei (Human player with random faction)
-   case  1: return "Zufall";        //CPU Spieler mit zufälliger Partei (AI player with random faction)
-   case  2: return "Zuschauer";     //(Observer)
-   case  3: return "Kommentator";   //(Commentator)
-   case  6: return "GDI";
-   case  7: return "Steel Talons";
-   case  8: return "ZOCOM";
-   case  9: return "Nod";
-   case 10: return "Schwarze Hand"; //(Black Hand)
-   case 11: return "Kanes Jünger";  //(The Marked of Kane)
-   case 12: return "Scrin";
-   case 13: return "Reaper-17";
-   case 14: return "Traveler-59";
-   default: return "<b>UNBEKANNT!</b>";
+   case  1: return 'Zufall';        //CPU Spieler mit zufälliger Partei (AI player with random faction)
+   case  2: return 'Zuschauer';     //(Observer)
+   case  3: return 'Kommentator';   //(Commentator)
+   case  6: return 'GDI';
+   case  7: return 'Steel Talons';
+   case  8: return 'ZOCOM';
+   case  9: return 'Nod';
+   case 10: return 'Schwarze Hand'; //(Black Hand)
+   case 11: return 'Kanes Juenger';  //(The Marked of Kane)
+   case 12: return 'Scrin';
+   case 13: return 'Reaper-17';
+   case 14: return 'Traveler-59';
+   default: return '<b>UNBEKANNT!</b>';
   }
  else
   switch ($faction)
   {
    case -1:                      //Menschlicher Spieler mit zufälliger Partei (Human player with random faction)
-   case 1: return "Zufall";      //CPU Spieler mit zufälliger Partei (AI player with random faction)
-   case 2: return "Zuschauer";   //(Observer)
-   case 3: return "Kommentator"; //(Commentator)
-   case 6: return "GDI";
-   case 7: return "Nod";
-   case 8: return "Scrin";
-   default: return "<b>UNBEKANNT!</b>";
+   case 1: return 'Zufall';      //CPU Spieler mit zufälliger Partei (AI player with random faction)
+   case 2: return 'Zuschauer';   //(Observer)
+   case 3: return 'Kommentator'; //(Commentator)
+   case 6: return 'GDI';
+   case 7: return 'Nod';
+   case 8: return 'Scrin';
+   default: return '<b>UNBEKANNT!</b>';
   }
 }
 
@@ -59,16 +59,16 @@ function getColor($color)
 {
  switch ($color)
  {
-  case -1: return "Zufall";   //Keine oder zufällige Farbe (No color or random one)
-  case 0: return "Blau";      //(Blue)
-  case 1: return "Gelb";      //(Yellow)
-  case 2: return "Grün";      //(Green)
-  case 3: return "Orange";    //(Orange)
-  case 4: return "Rosa";      //(Pink)
-  case 5: return "Lila";      //(Purple)
-  case 6: return "Rot";       //(Red)
-  case 7: return "Hellblau";  //(Light blue)
-  default: return "<b>UNBEKANNT!</b>";
+  case -1: return 'Zufall';   //Keine oder zufällige Farbe (No color or random one)
+  case 0: return 'Blau';      //(Blue)
+  case 1: return 'Gelb';      //(Yellow)
+  case 2: return 'Gruen';      //(Green)
+  case 3: return 'Orange';    //(Orange)
+  case 4: return 'Rosa';      //(Pink)
+  case 5: return 'Lila';      //(Purple)
+  case 6: return 'Rot';       //(Red)
+  case 7: return 'Hellblau';  //(Light blue)
+  default: return '<b>UNBEKANNT!</b>';
  }
 }
 
@@ -79,7 +79,7 @@ function getColor($color)
 function parseINIString($ini, $kw)
 {
  //String kürzen und auflösen (Trim and split string)
- $ini = explode(";", substr($ini, 3, strlen($ini)-4));                   //print_r($ini); //debug
+ $ini = explode(';', substr($ini, 3, strlen($ini)-4));                   //print_r($ini); //debug
  //Array map format:
  #0 -> mapfilename
  #1 -> MC
@@ -92,7 +92,7 @@ function parseINIString($ini, $kw)
  #8 -> S => All participants, seperated by ":"
  $iniarray['mapfilename'] = $ini[0];
  //Spielregeln verarbeiten (Process rules)
- $rules = explode(" ", trim($ini[7]));                                   //print_r($rules); //debug
+ $rules = explode(' ', trim($ini[7]));                                   //print_r($rules); //debug
  //Rules format:
   #0 -> Game type: 1=offline, 2=?, 3=unranked, 4=1v1, 5=2v2, 6=1v1 clan, 7=2v2 clan (4-7 all ranked)
   #1 -> Game speed (max 100)
@@ -110,36 +110,36 @@ function parseINIString($ini, $kw)
  //Spielart bestimmen (Get game type)
  switch (substr($rules[0], 3))
  {
-  case 1: $iniarray['gametype'] = "Offline, Gefecht"; break;
-  case 2: $iniarray['gametype'] = "Offline, LAN"; break;
-  case 3: $iniarray['gametype'] = "Online, Unranked"; break;
-  case 4: $iniarray['gametype'] = "Online, Ranked, 1 vs. 1"; break;
-  case 5: $iniarray['gametype'] = "Online, Ranked, 2 vs. 2"; break;
-  case 6: $iniarray['gametype'] = "Online, Clan, 1 vs. 1"; break;
-  case 7: $iniarray['gametype'] = "Online, Clan, 2 vs. 2"; break;
-  default: $iniarray['gametype'] = "<b>UNBEKANNT!</b>"; break;
+  case 1: $iniarray['gametype'] = 'Offline, Gefecht'; break;
+  case 2: $iniarray['gametype'] = 'Offline, LAN'; break;
+  case 3: $iniarray['gametype'] = 'Online, Unranked'; break;
+  case 4: $iniarray['gametype'] = 'Online, Ranked, 1 vs. 1'; break;
+  case 5: $iniarray['gametype'] = 'Online, Ranked, 2 vs. 2'; break;
+  case 6: $iniarray['gametype'] = 'Online, Clan, 1 vs. 1'; break;
+  case 7: $iniarray['gametype'] = 'Online, Clan, 2 vs. 2'; break;
+  default: $iniarray['gametype'] = '<b>UNBEKANNT!</b>'; break;
  }
  //Spielgeschwindigkeit auslesen (Extract game speed)
- $iniarray['gamespeed'] = $rules[1] . "%";
+ $iniarray['gamespeed'] = $rules[1] . '%';
  //Startgeld auslesen (Extract starting cash)
- $iniarray['startcash'] = $rules[2] . "\$";
+ $iniarray['startcash'] = $rules[2] . '$';
  //BattleCast bestimmen (Detect BattleCast)
- $iniarray['bc'] = ($rules[3] == "1") ? "Ja" : "Nein";
+ $iniarray['bc'] = ($rules[3] == '1') ? 'Ja' : 'Nein';
  //VoIP
- $iniarray['voip'] = ($rules[4] == "1") ? "Ja" : "Nein";
+ $iniarray['voip'] = ($rules[4] == '1') ? 'Ja' : 'Nein';
  //BattleCast Aufnahmeverzögerung (BattleCast delay)
- $iniarray['delay'] = $rules[5] . " Minuten";
+ $iniarray['delay'] = $rules[5] . ' Minuten';
  //Zufallskisten bestimmen (Detect random crates)
- $iniarray['crates'] = ($rules[6] == "0") ? "Nein" : "Ja";
+ $iniarray['crates'] = ($rules[6] == '0') ? 'Nein' : 'Ja';
  //Weiter mit INI Eintrag 8 (Proceed with INI entry 8)
- $ini = explode(":", substr($ini[8], 2, strlen($ini[8])-3));
+ $ini = explode(':', substr($ini[8], 2, strlen($ini[8])-3));
  //Jeden Spieler verarbeiten (Process each player)
  for ($i=1; $i<9; $i++) //8 iterations needed!
  {
   //Spielerinfos ermitteln (Extract player infos)
-  $player = explode(",", $ini[$i-1]);                                      //print_r($player); //debug
+  $player = explode(',', $ini[$i-1]);                                      //print_r($player); //debug
   //"Kommentator-Leiche" überspringen (Skip "Commentator-corpse")
-  if ($player[0] == "Hpost Commentator") continue;
+  if ($player[0] == 'Hpost Commentator') continue;
   // ----- H = Human -----
   if (strstr(substr($player[0], 0, 1), "H"))
   {
@@ -159,35 +159,35 @@ function parseINIString($ini, $kw)
    //Spielertyp bestimmen (Get player type)
    switch ($player[5])
    {
-    case 2: $playerarray[$i]['playertype'] = "Zuschauer"; break;
-    case 3: $playerarray[$i]['playertype'] = "Kommentator"; break;
-    default: $playerarray[$i]['playertype'] = "Spieler"; break;
+    case 2: $playerarray[$i]['playertype'] = 'Zuschauer'; break;
+    case 3: $playerarray[$i]['playertype'] = 'Kommentator'; break;
+    default: $playerarray[$i]['playertype'] = 'Spieler'; break;
    }
    //Spielername extrahieren (Extract player name)
    $playerarray[$i]['playername'] = substr($player[0], 1, strlen($player[0])-1);
    //IP Adresse bestimmen (Get IP adress)
    if ($player[1] > 0)
    {
-    for ($j=0; $j<8; $j+=2) $playerarray[$i]['ip'] .= hexdec(substr($player[1], $j, 2)) . ".";
+    for ($j=0; $j<8; $j+=2) $playerarray[$i]['ip'] .= hexdec(substr($player[1], $j, 2)) . '.';
     $playerarray[$i]['ip'] = substr($playerarray[$i]['ip'], 0, -1);
    }
    //Spieltyp sichern für später (Save match type for later use)
-   $ft = ($player[3] == "FT") ? true : false;
+   $ft = ($player[3] == 'FT') ? true : false;
    //Farbe bestimmen (Get color)
    $playerarray[$i]['color'] = getColor($player[4]);
    //Partei bestimmen (Get faction)
    $playerarray[$i]['faction'] = getFaction($player[5], $kw);
    //Spielposition bestimmen (Get map position)
-   $playerarray[$i]['mappos'] = ($player[6] == "-1") ? "Zufällig" : ($player[6]+1);
+   $playerarray[$i]['mappos'] = ($player[6] == '-1') ? 'Zufällig' : ($player[6]+1);
    //Team bestimmen (Get team)
-   $playerarray[$i]['team'] = ($player[7] != "-1") ? ($player[7]+1) : "-";
+   $playerarray[$i]['team'] = ($player[7] != '-1') ? ($player[7]+1) : '-';
    //Handicap
-   $playerarray[$i]['handicap'] = (($player[8] == "-1") ? "0" : $player[8]) . "%";
+   $playerarray[$i]['handicap'] = (($player[8] == '-1') ? '0' : $player[8]) . '%';
    //Clan tag
    $playerarray[$i]['clan'] = $player[11];
   }
   // ----- C = Computer -----
-  elseif (strstr($player[0], "C"))
+  elseif (strstr($player[0], 'C'))
   {
    //CPU player format:
    #0 -> Difficulty: CE = easy, CM = medium, CH = hard, CB = brutal
@@ -197,47 +197,47 @@ function parseINIString($ini, $kw)
    #4 -> Team number
    #5 -> Handicap
    #6 -> AI type
-   $playerarray[$i]['playertype'] = "Computer";
+   $playerarray[$i]['playertype'] = 'Computer';
    //Schwierigkeit bestimmen (Get difficulty)
    switch ($player[0])
    {
-    case "CE": $playerarray[$i]['diff'] = ($kw) ? "Einfache KI" : "Leicht"; break;
-    case "CM": $playerarray[$i]['diff'] = ($kw) ? "Mittlere KI" : "Mittel"; break;
-    case "CH": $playerarray[$i]['diff'] = ($kw) ? "Schwierige KI" : "Schwer"; break;
-    case "CB": $playerarray[$i]['diff'] = ($kw) ? "Erbarmungslose KI" : "Brutal"; break;
-    default: $playerarray[$i]['diff'] = "<b>UNBEKANNT!</b>"; break;
+    case 'CE': $playerarray[$i]['diff'] = ($kw) ? 'Einfache KI' : 'Leicht'; break;
+    case 'CM': $playerarray[$i]['diff'] = ($kw) ? 'Mittlere KI' : 'Mittel'; break;
+    case 'CH': $playerarray[$i]['diff'] = ($kw) ? 'Schwierige KI' : 'Schwer'; break;
+    case 'CB': $playerarray[$i]['diff'] = ($kw) ? 'Erbarmungslose KI' : 'Brutal'; break;
+    default: $playerarray[$i]['diff'] = '<b>UNBEKANNT!</b>'; break;
    }
    //Farbe bestimmen (Get color)
    $playerarray[$i]['color'] = getColor($player[1]);
    //Partei bestimmen (Get faction)
    $playerarray[$i]['faction'] = getFaction($player[2], $kw);
    //Spielposition bestimmen (Get map position)
-   $playerarray[$i]['mappos'] = ($player[3] == "-1") ? "Zufällig" : ($player[3]+1);
+   $playerarray[$i]['mappos'] = ($player[3] == '-1') ? 'Zufällig' : ($player[3]+1);
    //Team bestimmen (Get team)
-   $playerarray[$i]['team'] = ($player[4] != -1) ? ($player[4]+1) : "-";
+   $playerarray[$i]['team'] = ($player[4] != -1) ? ($player[4]+1) : '-';
    //Handicap
-   $playerarray[$i]['handicap'] = $player[5] . "%";
+   $playerarray[$i]['handicap'] = $player[5] . '%';
    //KI-Persönlichkeit bestimmen (Get AI type)
    switch ($player[6])
    {
-    case 0: $playerarray[$i]['aitype'] = "Ausgewogen"; break;
-    case 1: $playerarray[$i]['aitype'] = "Rushen"; break;
-    case 2: $playerarray[$i]['aitype'] = "Einigeln"; break;
-    case 3: $playerarray[$i]['aitype'] = "Guerilla"; break;
-    case 4: $playerarray[$i]['aitype'] = "Dampfwalze"; break;
-    default: $playerarray[$i]['aitype'] = "Zufällig"; break;
+    case 0: $playerarray[$i]['aitype'] = 'Ausgewogen'; break;
+    case 1: $playerarray[$i]['aitype'] = 'Rushen'; break;
+    case 2: $playerarray[$i]['aitype'] = 'Einigeln'; break;
+    case 3: $playerarray[$i]['aitype'] = 'Guerilla'; break;
+    case 4: $playerarray[$i]['aitype'] = 'Dampfwalze'; break;
+    default: $playerarray[$i]['aitype'] = 'Zufällig'; break;
    }
   }
   // ----- X = No player -----
-  elseif (strstr($player[0], "X"))
+  elseif (strstr($player[0], 'X'))
    continue; //nothing to do, go on
   // ----- Unbekannter Typ (Unknown player type) -----
   else
-   $playerarray[$i]['playertype'] = "<b>UNBEKANNT!</b>";
+   $playerarray[$i]['playertype'] = '<b>UNBEKANNT!</b>';
  }
  $iniarray['players'] = $playerarray;
  //Spieltyp (Match type)
- $iniarray['matchtype'] = ($ft) ? "Automatch" : "Eigenes Match";
+ $iniarray['matchtype'] = ($ft) ? 'Automatch' : 'Eigenes Match';
  return $iniarray;
 }
 
@@ -274,7 +274,7 @@ function readBinString($fp)
 function openReplay($file, $kw=false)
 {
  //Dateiname (ohne Ordner) und Größe in Kilobytes (Replay filename (without folder) and size in kilobytes)
- $replay = array('file' => substr($file, strpos($file, "/")+1), 'size' => round(filesize($file)/1024) . " KB");
+ $replay = array('file' => substr($file, strrpos($file, '/')+1), 'size' => round(filesize($file)/1024) . ' KB');
  //Replay öffnen (Open replay)
  if (!$fp = fopen($file, "rb")) return false;
  //"C&C3 REPLAY HEADER" lesen (Read header)
@@ -292,6 +292,7 @@ function openReplay($file, $kw=false)
  //Kartenname lesen (Read mapname)
  $replay['mapname'] = readBinString($fp);
  $replay['picname'] = str_replace("'", "", $replay['mapname']);
+ $replay['exists'] = file_exists('images/mappics/' . $replay['picname']);
  //"FakeMapID", Spielernamen und "CNC3RPL" überspringen (Skip "FakeMapID", player names and "CNC3RPL")
  while ($temp != "\x0\x0\x0\x0") $temp = fread($fp, 4);
  //"M=" suchen (Seek "M=")
@@ -308,7 +309,7 @@ function openReplay($file, $kw=false)
  //Zum Datum zurückspringen, da dies eine fixe Position vor dem "M=" hat (Jump back to date, because it has a fixed position before the "M=")
  fseek($fp, -42, SEEK_CUR);
  //Unix Zeitstempel lesen, konvertieren und formatieren (Read, convert and format Unix timestamp)
- $replay['date'] = date("d.m.Y, H:i:s", conv($fp, 4));
+ $replay['date'] = date('d.m.Y, H:i:s', conv($fp, 4));
  //Wieder zum "M=" springen (Jump back to "M=")
  fseek($fp, 39, SEEK_CUR);
  //INI File Chunk lesen und parsen (Read and parse INI file chunk)
@@ -319,7 +320,7 @@ function openReplay($file, $kw=false)
   $temp = fread($fp, 1);
  }
  $replay['ini'] = parseINIString($ini, $kw);
- $replay['official'] = (stristr($replay['ini']['mapfilename'], "official")) ? true : false;
+ $replay['official'] = (stristr($replay['ini']['mapfilename'], 'official')) ? true : false;
  //Weitere Sachen überspringen und Versionsnummer suchen (Skip some things and search version number)
  do
  {
@@ -334,7 +335,7 @@ function openReplay($file, $kw=false)
  //Version lesen (Read version)
  $version = fread($fp, 3);
  //Falls die Nummer länger ist als 1.x (In case version is longer than 1.x)
- $temp = "";
+ $temp = '';
  while ($temp != ".")
  {
   $version .= $temp;
@@ -344,7 +345,7 @@ function openReplay($file, $kw=false)
  //Zum Ende der Datei, ein paar Bytes vor dem Footer (Jump to end of file, a few bytes before the footer)
  fseek($fp, -40, SEEK_END);
  //Dauer konvertieren, berechnen und formatieren (Convert, calculate and format length)
- $replay['length'] = date("i:s", (conv(substr(strstr(fread($fp, 40), "C&C3 REPLAY FOOTER"), 18, 4), 4)/15));
+ $replay['length'] = date('i:s', (conv(substr(strstr(fread($fp, 40), "C&C3 REPLAY FOOTER"), 18, 4), 4)/15));
  //Replay schließen (Close replay)
  fclose($fp);
  //Fertig, Information zurück geben :) (Done, return informations :) )
@@ -355,12 +356,14 @@ function openReplay($file, $kw=false)
 # Speichert temporär ein Replay von einer externen Quelle lokal ab, während die Infos ausgelesen werden. Ordner tmp muss existieren!
 # (Saves temporary a replay from an extarnal source locally, while the informations are retrieved. Folder tmp has to exist!)
 #
-function streamReplay($replay, $repfile="")
+function streamReplay($replay, $repfile='')
 {
  //Handelt es sich um Kanes Rache? (Is this Kane's Wrath?)
- $kw = stristr($repfile, ".KWReplay") || stristr($replay, ".KWReplay");
+ $kw = stristr($repfile, '.KWReplay') || stristr($replay, '.KWReplay');
+ //Temporäre Datei zum Schreiben anlegen (Create temp file for writing)
+ $repfile = tempnam('tmp', $repfile);
  //Bombensicherer Name (100% not assigned name)
- $repfile = "tmp/" . (($repfile && !file_exists("tmp/" . $repfile)) ? $repfile : strtr(microtime(), array(" " => "", "." => ""))  . "." . (($kw) ? "KW" : "CNC3") . "Replay");
+ ##$repfile = 'tmp/' . (($repfile && !file_exists('tmp/' . $repfile)) ? $repfile : strtr(microtime(), array(' ' => '', '.' => ''))  . '.' . (($kw) ? 'KW' : 'CNC3') . 'Replay');
  //Falls eine ältere PHP Version als 5.0 vorliegt, dürfen nur PHP4 Funktionen benutzt werden (In case of an older PHP version than 5.0, only use PHP4 functions)
  if (substr(phpversion(), 0, 1) < 5)
  {
