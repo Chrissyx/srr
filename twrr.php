@@ -6,7 +6,7 @@
 #######################################################################
 
 # Tiberium Wars Replay Reader (TWRR)
-# Version: 0.9.1 (2008-02-14)
+# Version: 0.9.2 (2008-03-08)
 # Thanks to...
 #           ...Quicksilver for GRR source code and inspiration
 #           ...MerlinSt for helpful hints and code fragments
@@ -226,9 +226,9 @@ function parseINIString($ini)
 # Konvertiert einen binären Zahlenstring mit der gegebenen Länge zu einer natürlichen Zahl.
 # (Converts a binary string of numbers with the given length to a natural number.)
 #
-function conv($fp, $anz)
+function conv($var, $anz) //$var kann filepointer oder string sein!
 {
- for ($i=0; $i<$anz; $i++) $erg += ord(fread($fp, 1))*pow(256, $i);
+ for ($i=0; $i<$anz; $i++) $erg += ord((is_string($var)) ? substr($var, $i, 1) : fread($var, 1))*pow(256, $i);
  return $erg;
 }
 
@@ -322,10 +322,10 @@ function openReplay($file)
   $temp = fread($fp, 1);
  }
  $replay['version'] = $version;
- //Zum Ende der Datei, genau hinter dem Footer (Jump to end of file, just behind the footer)
- fseek($fp, -14, SEEK_END);
+ //Zum Ende der Datei, ein paar Bytes vor dem Footer (Jump to end of file, a few bytes before the footer)
+ fseek($fp, -40, SEEK_END);
  //Dauer konvertieren, berechnen und formatieren (Convert, calculate and format length)
- $replay['length'] = date("i:s", (conv($fp, 4)/15));
+ $replay['length'] = date("i:s", (conv(substr(strstr(fread($fp, 40), "C&C3 REPLAY FOOTER"), 18, 4), 4)/15));
  //Replay schließen (Close replay)
  fclose($fp);
  //Fertig, Information zurück geben :) (Done, return informations :) )
