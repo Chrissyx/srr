@@ -6,7 +6,7 @@
 #######################################################################
 
 # Tiberium Wars Replay Reader (TWRR)
-# Version: 0.8.6 (2008-01-15)
+# Version: 0.8.7 (2008-01-18)
 # Thanks to Quicksilver for GRR source code and inspiration
 
 
@@ -296,6 +296,24 @@ function openReplay($file)
  //Replay schließen (Close replay)
  fclose($fp);
  //Fertig, Information zurück geben :) (Done, return informations :) )
+ return $replay;
+}
+
+#
+# Speichert temporär ein Replay von einer externen Quelle lokal ab, während die Infos ausgelesen werden.
+# (Saves temporary a replay from an extarnal source locally, while the informations are retrieved.)
+#
+function streamReplay($replay, $repfile="")
+{
+ //Bombensicherer Name (100% not assigned name)
+ $repfile = ($repfile && !file_exists($repfile)) ? $repfile : strtr(microtime(), array(" " => "", "." => ""))  . ".CNC3Replay";
+ //Datei holen und lokal speichern (Get file and save local)
+ file_put_contents($repfile, file_get_contents($replay));
+ //Infos auslesen (Read infos)
+ $replay = openReplay($repfile);
+ //Replay wieder löschen (Finally delete replay)
+ unlink($repfile);
+ //Infos zurückgeben (Return infos)
  return $replay;
 }
 ?>
