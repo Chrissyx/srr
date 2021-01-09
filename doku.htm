@@ -3,14 +3,14 @@
  <head>
   <title>SAGE Replay Reader</title>
   <meta name="author" content="Chrissyx">
-  <meta name="keywords" content="TWRR, SRR, XML, SAGE, TW, KW, KR, RA3, AR3, RA3 Beta, Uprising, Aufstand, C&amp;C, Replay, Parser, Reader, Chrissyx, Readme, Doku">
+  <meta name="keywords" content="TWRR, SRR, XML, SAGE, TW, KW, KR, RA3, AR3, RA3 Beta, Uprising, Aufstand, CnC4, CnC4 Beta, TT, C&amp;C, Replay, Parser, Reader, Chrissyx, Readme, Doku">
   <meta name="description" content="Replay-Parser für C&amp;C Spiele auf Basis der XML SAGE Engine">
   <meta name="generator" content="Notepad 4.10.1998">
   <meta http-equiv="content-language" content="de">
   <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
  </head>
  <body>
-  <h1>SAGE Replay Reader V1.0 RC2</h1>
+  <h1>SAGE Replay Reader V1.2 Beta</h1>
   <p>Ein Replay-Parser in PHP für C&amp;C Spiele auf Basis der XML SAGE und RNA Engine.</p>
   <ul>
    <li>Ab V0.9.5 auch mit Support für Kanes Rache!</li>
@@ -18,11 +18,13 @@
    <li>Ab V0.9.11 neuer Name und erster Support für RA3 Beta!</li>
    <li>Ab V0.10 voller Support für Alarmstufe Rot 3!</li>
    <li>Ab V1.0 RC2 auch mit Support für Der Aufstand!</li>
+   <li>Ab V1.1 auch mit Support für Tiberian Twilight Beta!</li>
+   <li>Ab V1.2 voller Support für Tiberian Twlight!</li>
   </ul>
   <table border="1">
    <tr><th>Eintrag im Array</th><th>Bedeutung</th><th>Erklärung</th></tr>
    <tr><td>$replay[file]</td><td>Dateiname</td><td>Name der Replaydatei mit Endung</td></tr>
-   <tr><td>$replay[size]</td><td>Größe</td><td>Größe der Replaydatei in KB</td></tr>
+   <tr><td>$replay[size]</td><td>Größe</td><td>Größe der Replaydatei in kB</td></tr>
    <tr><td>$replay[name]</td><td>Spielname</td><td>Name des Spiels</td></tr>
    <tr><td>$replay[desc]</td><td>Spielbeschreibung</td><td>Beschreibung des Spiels</td></tr>
    <tr><td>$replay[mapname]</td><td>Kartenname</td><td>Name der gespielten Karte</td></tr>
@@ -38,11 +40,18 @@
    <tr><td>$replay[ini][voip]</td><td>VoIP</td><td>Ob Voice over IP aktiviert war (Ja, Nein)</td></tr>
    <tr><td>$replay[ini][delay]</td><td>BattleCast Delay</td><td>Aufnahmeverzögerung bei BattleCast-Spielen in Minuten</td></tr>
    <tr><td>$replay[ini][crates]</td><td>Kisten</td><td>Ob Kisten aktiviert waren (Ja, Nein)</td></tr>
+   <tr><td>$replay[ini][cnc4]</td><td>C&amp;C4 Details</td><td><i>Nur bei Tiberian Twilight ab V1.02:</i> <b>ARRAY</b> mit Angaben zu den Konditionen einer Spielrunde</td></tr>
+   <tr><td>$replay[ini][cnc4][time]</td><td>Zeitlimit</td><td>Das Zeitlimit einer Spielrunde (h:mm:ss)</td></tr>
+   <tr><td>$replay[ini][cnc4][effect]</td><td>Effektivität</td><td>Effektivität (Niedrig bis Sehr hoch)</td></tr>
+   <tr><td>$replay[ini][cnc4][winpoints]</td><td>Siegpunkte</td><td>Benötigte Punkte zum Sieg</td></tr>
+   <tr><td>$replay[ini][cnc4][revealmap]</td><td>Karte enthüllen</td><td>Ob Fog of War nachwächst (Ja/Nein)</td></tr>
+   <tr><td>$replay[ini][cnc4][aimpoints]</td><td>Zielpunkte-Multiplikator</td><td>Multiplikator für Zielpunkte</td></tr>
+   <tr><td>$replay[ini][cnc4][killpoints]</td><td>Einheitenkill-Multiplikator</td><td>Multiplikator für zerstörte Einheitenpunkte</td></tr>
    <tr><td>$replay[ini][players]</td><td>Spieler</td><td><b>ARRAY</b> mit Angaben über alle Beteiligten</td></tr>
-   <tr><td>$replay[ini][players][<i>X</i>]</td><td>Spieler <i>X</i></td><td><b>ARRAY</b> mit Angaben zu den <i>X</i>. Teilnehmer. <i>X</i> geht von 1 bis maximal 8, wobei die Nummerierung nicht durchgehend sein muss!</td></tr>
+   <tr><td>$replay[ini][players][<i>X</i>]</td><td>Spieler <i>X</i></td><td><b>ARRAY</b> mit Angaben zu den <i>X</i>. Teilnehmer. <i>X</i> geht von 1 bis maximal 8 bzw. 12 (bei TT), wobei die Nummerierung nicht durchgehend sein muss!</td></tr>
    <tr><td>$replay[ini][players][<i>X</i>][playertype]</td><td>Spielertyp</td><td>Typ des Teilnehmers (Zuschauer, Kommentator, Spieler, Computer)</td></tr>
-   <tr><td>$replay[ini][players][<i>X</i>][playername]</td><td>Spielername</td><td><i>Nur bei menschlichen Teilnehmern:</i> Name des Teilnehmern</td></tr>
-   <tr><td>$replay[ini][players][<i>X</i>][ip]</td><td>IP</td><td><i>Nur bei menschlichen -online- Teilnehmern:</i> IP Adresse des Teilnehmers</td></tr>
+   <tr><td>$replay[ini][players][<i>X</i>][playername]</td><td>Spielername</td><td><i>Nur bei menschlichen Teilnehmern:</i> Name des Teilnehmers</td></tr>
+   <tr><td>$replay[ini][players][<i>X</i>][ip]</td><td>IP</td><td><i>Nur bei menschlichen -online- Teilnehmern:</i> IP-Adresse des Teilnehmers</td></tr>
    <tr><td>$replay[ini][players][<i>X</i>][color]</td><td>Farbe</td><td>Farbe des Mitspielers</td></tr>
    <tr><td>$replay[ini][players][<i>X</i>][faction]</td><td>Partei</td><td>Partei des Mitspielers</td></tr>
    <tr><td>$replay[ini][players][<i>X</i>][mappos]</td><td>Position</td><td>Position auf der Karte</td></tr>
