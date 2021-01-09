@@ -8,7 +8,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
  </head>
  <body>
-  <h1>Tiberium Wars Replay Reader V0.9.2</h1>
+  <h1>Tiberium Wars Replay Reader V0.9.5</h1>
+  Ab V0.9.5 auch mit Support für Kanes Rache!<br><br>
   <table border="1">
    <tr><th>Eintrag im Array</th><th>Bedeutung</th><th>Erklärung</th></tr>
    <tr><td>$replay[file]</td><td>Dateiname</td><td>Name der Replaydatei mit Endung</td></tr>
@@ -16,11 +17,11 @@
    <tr><td>$replay[name]</td><td>Spielname</td><td>Name des Spiels</td></tr>
    <tr><td>$replay[desc]</td><td>Spielbeschreibung</td><td>Beschreibung des Spiels</td></tr>
    <tr><td>$replay[mapname]</td><td>Kartenname</td><td>Name der gespielten Karte</td></tr>
-   <tr><td>$replay[picname]</td><td>Kartenbild</td><td>Alternativer Dateiname zur Darstellung eines Bildes der Karte ohne '</td></tr>
+   <tr><td>$replay[picname]</td><td>Kartenbildname</td><td>Alternativer Dateiname zur Darstellung eines Bildes der Karte ohne '</td></tr>
    <tr><td>$replay[date]</td><td>Datum</td><td>Datum und Uhrzeit, wann das Spiel stattfand (dd.mm.yyyy, hh:mm:ss)</td></tr>
    <tr><td>$replay[ini]</td><td>INI File Chunk</td><td><b>ARRAY</b> mit weiteren Angaben</td></tr>
    <tr><td>$replay[ini][mapfilename]</td><td>Dateiname Karte</td><td>Pfad und Dateiname der Karte ohne Endung</td></tr>
-   <tr><td>$replay[ini][gametype]</td><td>Spielart</td><td>Beinhaltet mehrere Angaben zur Art des Spiels (Offline, Online, Unranked, Ranked, Clan, 1 vs. 1, 2 vs. 2)</td></tr>
+   <tr><td>$replay[ini][gametype]</td><td>Spielart</td><td>Beinhaltet mehrere Angaben zur Art des Spiels (Offline, Gefecht, LAN, Online, Unranked, Ranked, Clan, 1 vs. 1, 2 vs. 2)</td></tr>
    <tr><td>$replay[ini][gamespeed]</td><td>Spielgeschwindigkeit</td><td>Spielgeschwindigkeit in Prozent</td></tr>
    <tr><td>$replay[ini][startcash]</td><td>Startgeld</td><td>Startgeld in Dollar</td></tr>
    <tr><td>$replay[ini][bc]</td><td>BattleCasted</td><td>Ob das Spiel über BattleCast veröffentlicht wurde (Ja, Nein)</td></tr>
@@ -42,7 +43,7 @@
    <tr><td>$replay[ini][players][<i>X</i>][aitype]</td><td>Persönlichkeit</td><td><i>Nur bei Computern:</i> Persönlichkeit der KI</td></tr>
    <tr><td>$replay[ini][matchtype]</td><td>Spieltyp</td><td>Typ des Spiels (Automatch, Eigenes Match)</td></tr>
    <tr><td>$replay[official]</td><td>Offizielle Karte</td><td>Ob eine offizielle Karte verwendet wurde (true, false)</td></tr>
-   <tr><td>$replay[version]</td><td>Version</td><td>Benutzte Version von Tiberium Wars</td></tr>
+   <tr><td>$replay[version]</td><td>Version</td><td>Benutzte Version von Tiberium Wars bzw. Kanes Rache</td></tr>
    <tr><td>$replay[length]</td><td>Dauer</td><td>Länge des Spiels in Minuten (mm:ss)</td></tr>
   </table>
  </body>
