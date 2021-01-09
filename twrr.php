@@ -6,17 +6,17 @@
 #######################################################################
 
 # Tiberium Wars Replay Reader (TWRR)
-# Version: 0.9.6 (2008-04-12)
+# Version: 0.9.10 (2008-07-23)
 # Thanks to...
 #           ...Quicksilver for GRR source code and inspiration
 #           ...MerlinSt for helpful hints and code fragments
 #           ...Lepidosteus for PHP Replay Parser code and algorithms
 
 
-#
-# Gibt die Partei eines Spielers anhand des gegebenen Wertes zurück.
-# (Returns the faction of a player by the given value.)
-#
+/**
+ * Gibt die Partei eines Spielers anhand des gegebenen Wertes zurück.
+ * (Returns the faction of a player by the given value.)
+ */
 function getFaction($faction, $kw)
 {
  if ($kw)
@@ -51,10 +51,10 @@ function getFaction($faction, $kw)
   }
 }
 
-#
-# Gibt die Farbe eines Spielers anhand des gegebenen Wertes zurück.
-# (Returns the color of a player by a given value.)
-#
+/**
+ * Gibt die Farbe eines Spielers anhand des gegebenen Wertes zurück.
+ * (Returns the color of a player by a given value.)
+ */
 function getColor($color)
 {
  switch ($color)
@@ -72,10 +72,10 @@ function getColor($color)
  }
 }
 
-#
-# Parst den INI String des Replays und gibt die Werte zurück.
-# (Parse the INI string from the replay and returns the values.)
-#
+/**
+ * Parst den INI String des Replays und gibt die Werte zurück.
+ * (Parse the INI string from the replay and returns the values.)
+ */
 function parseINIString($ini, $kw)
 {
  //String kürzen und auflösen (Trim and split string)
@@ -94,7 +94,7 @@ function parseINIString($ini, $kw)
  //Spielregeln verarbeiten (Process rules)
  $rules = explode(' ', trim($ini[7]));                                   //print_r($rules); //debug
  //Rules format:
-  #0 -> Game type: 1=offline, 2=?, 3=unranked, 4=1v1, 5=2v2, 6=1v1 clan, 7=2v2 clan (4-7 all ranked)
+  #0 -> Game type: 1=offline, 2=LAN, 3=unranked, 4=1v1, 5=2v2, 6=1v1 clan, 7=2v2 clan (4-7 all ranked)
   #1 -> Game speed (max 100)
   #2 -> Starting cash
   #3 -> BattleCasted?
@@ -241,20 +241,20 @@ function parseINIString($ini, $kw)
  return $iniarray;
 }
 
-#
-# Konvertiert einen binären Zahlenstring mit der gegebenen Länge zu einer natürlichen Zahl.
-# (Converts a binary string of numbers with the given length to a natural number.)
-#
+/**
+ * Konvertiert einen binären Zahlenstring mit der gegebenen Länge zu einer natürlichen Zahl.
+ * (Converts a binary string of numbers with the given length to a natural number.)
+ */
 function conv($var, $anz) //$var kann filepointer oder string sein!
 {
  for ($i=0; $i<$anz; $i++) $erg += ord((is_string($var)) ? substr($var, $i, 1) : fread($var, 1))*pow(256, $i);
  return $erg;
 }
 
-#
-# Liest einen binären String bis zum Terminationszeichen.
-# (Reads a binary string until termination character.)
-#
+/**
+ * Liest einen binären String bis zum Terminationszeichen.
+ * (Reads a binary string until termination character.)
+ */
 function readBinString($fp)
 {
  $temp = fgetc($fp);
@@ -267,18 +267,23 @@ function readBinString($fp)
  return $name;
 }
 
-#
-# Öffnet eine Replaydatei und gibt die enthaltenen Informationen als Array zurück.
-# (Opens a replay file and returns the contained informations as an array.)
-#
+/**
+ * Öffnet eine Replaydatei und gibt die enthaltenen Informationen als Array zurück.
+ * (Opens a replay file and returns the contained informations as an array.)
+ * 
+ * @author Chrissyx
+ * @param string Die Replaydatei (The replayfile)
+ * @param boolean Kanes Rache? (Kane's Wrath?)
+ * @return mixed Array mit Informationen zum Replay (Array with informations from the replay)
+ */
 function openReplay($file, $kw=false)
 {
  //Dateiname (ohne Ordner) und Größe in Kilobytes (Replay filename (without folder) and size in kilobytes)
  $replay = array('file' => substr($file, strrpos($file, '/')+1), 'size' => round(filesize($file)/1024) . ' KB');
  //Replay öffnen (Open replay)
- if (!$fp = fopen($file, "rb")) return false;
+ if (!$fp = fopen($file, 'rb')) return false;
  //"C&C3 REPLAY HEADER" lesen (Read header)
- if (strcmp(fread($fp, 18), "C&C3 REPLAY HEADER") != 0) return false;
+ if (strcmp(fread($fp, 18), 'C&C3 REPLAY HEADER') != 0) return false;
  //19 Bytes überspringen (Skip 19 Bytes)
  fseek($fp, 19, SEEK_CUR);
  //Spielname lesen (Read game name)
@@ -291,8 +296,8 @@ function openReplay($file, $kw=false)
  fseek($fp, 1, SEEK_CUR);
  //Kartenname lesen (Read mapname)
  $replay['mapname'] = readBinString($fp);
- $replay['picname'] = str_replace("'", "", $replay['mapname']);
- $replay['exists'] = file_exists('images/mappics/' . $replay['picname']);
+ $replay['picname'] = str_replace("'", '', $replay['mapname']);
+ $replay['exists'] = file_exists('images/mappics/' . $replay['picname'] . '.png');
  //"FakeMapID", Spielernamen und "CNC3RPL" überspringen (Skip "FakeMapID", player names and "CNC3RPL")
  while ($temp != "\x0\x0\x0\x0") $temp = fread($fp, 4);
  //"M=" suchen (Seek "M=")
@@ -300,12 +305,12 @@ function openReplay($file, $kw=false)
  {
   //...wenn nicht, das jetztige "=" überspringen und das nächste suchen (...if not, skip the current "=" and search the next one)
   $temp = fread($fp, 4);
-  while ($temp != "=") $temp = fread($fp, 1);
+  while ($temp != '=') $temp = fread($fp, 1);
   //Zwei Bytes zurück und das Zeichen vor "=" überprüfen (Two bytes back and check char before "=")
   fseek($fp, -2, SEEK_CUR);
  }
  //Absichern, dass auch wirklich "M=" erreicht wurde... (Make sure, "M=" is indeed reached...)
- while (fread($fp, 1) != "M");
+ while (fread($fp, 1) != 'M');
  //Zum Datum zurückspringen, da dies eine fixe Position vor dem "M=" hat (Jump back to date, because it has a fixed position before the "M=")
  fseek($fp, -42, SEEK_CUR);
  //Unix Zeitstempel lesen, konvertieren und formatieren (Read, convert and format Unix timestamp)
@@ -326,7 +331,7 @@ function openReplay($file, $kw=false)
  {
   //...wenn nicht, den jetzigen Punkt überspringen und den nächsten suchen (...if not, skip the current dot and search the next one)
   $temp = fread($fp, 4);
-  while ($temp != ".") $temp = fread($fp, 1);
+  while ($temp != '.') $temp = fread($fp, 1);
   //Drei Bytes zurück und das Zeichen vor der Zahl und dem Punkt überprüfen (Three bytes back and check char before major version number)
   fseek($fp, -3, SEEK_CUR);
  }
@@ -336,7 +341,7 @@ function openReplay($file, $kw=false)
  $version = fread($fp, 3);
  //Falls die Nummer länger ist als 1.x (In case version is longer than 1.x)
  $temp = '';
- while ($temp != ".")
+ while ($temp != '.')
  {
   $version .= $temp;
   $temp = fread($fp, 1);
@@ -345,36 +350,75 @@ function openReplay($file, $kw=false)
  //Zum Ende der Datei, ein paar Bytes vor dem Footer (Jump to end of file, a few bytes before the footer)
  fseek($fp, -40, SEEK_END);
  //Dauer konvertieren, berechnen und formatieren (Convert, calculate and format length)
- $replay['length'] = date('i:s', (conv(substr(strstr(fread($fp, 40), "C&C3 REPLAY FOOTER"), 18, 4), 4)/15));
+ $replay['length'] = date('i:s', (conv(substr(strstr(fread($fp, 40), 'C&C3 REPLAY FOOTER'), 18, 4), 4)/15));
  //Replay schließen (Close replay)
  fclose($fp);
  //Fertig, Information zurück geben :) (Done, return informations :) )
  return $replay;
 }
 
-#
-# Speichert temporär ein Replay von einer externen Quelle lokal ab, während die Infos ausgelesen werden. Ordner tmp muss existieren!
-# (Saves temporary a replay from an extarnal source locally, while the informations are retrieved. Folder tmp has to exist!)
-#
-function streamReplay($replay, $repfile='')
+/**
+ * Speichert temporär ein Replay von einer externen Quelle lokal ab, während die Infos ausgelesen werden.
+ * (Saves temporary a replay from an extarnal source locally, while the informations are retrieved.)
+ * 
+ * @author Chrissyx
+ * @param string URL des Replays (URL of the replay)
+ * @param string Dateiname des Replays (Filename of the replay)
+ * @return mixed Array mit Informationen zum Replay (Array with informations from the replay)
+ */
+function streamReplay($replay, $repfile=null)
 {
  //Handelt es sich um Kanes Rache? (Is this Kane's Wrath?)
  $kw = stristr($repfile, '.KWReplay') || stristr($replay, '.KWReplay');
  //Temporäre Datei zum Schreiben anlegen (Create temp file for writing)
- $repfile = tempnam('tmp', $repfile);
- //Bombensicherer Name (100% not assigned name)
- ##$repfile = 'tmp/' . (($repfile && !file_exists('tmp/' . $repfile)) ? $repfile : strtr(microtime(), array(' ' => '', '.' => ''))  . '.' . (($kw) ? 'KW' : 'CNC3') . 'Replay');
+ $repfile = tempnam(null, $repfile);
  //Falls eine ältere PHP Version als 5.0 vorliegt, dürfen nur PHP4 Funktionen benutzt werden (In case of an older PHP version than 5.0, only use PHP4 functions)
  if (substr(phpversion(), 0, 1) < 5)
  {
   //Datei zum binär-schreiben öffnen (Open file for binary write)
-  $fp = fopen($repfile, "wb");
+  $fp = fopen($repfile, 'wb');
   //Datei holen und lokal speichern [PHP4] (Get file and save local [PHP4])
   fwrite($fp, file_get_contents($replay));
   fclose($fp);
  }
  //Datei holen und lokal speichern [PHP5] (Get file and save local [PHP5])
  else file_put_contents($repfile, file_get_contents($replay));
+ //Infos auslesen (Read infos)
+ $replay = openReplay($repfile, $kw);
+ //Replay wieder löschen (Finally delete replay)
+ unlink($repfile);
+ //Infos zurückgeben (Return infos)
+ return $replay;
+}
+
+/**
+ * Liest ein Replay auf der vBulletin3-Datenbank aus und speichert es temporär ab, während die Infos ausgelesen werden.
+ * (Reads a replay from the vBulletin3-database and saves it temporary, while the informations are retrieved.)
+ * 
+ * @author Chrissyx
+ * @param string ID des vBulletin3-Attachments (ID of the vBulletin3-attachment)
+ * @param string Dateiname des Replays (Filename of the replay)
+ * @return mixed Array mit Informationen zum Replay (Array with informations from the replay)
+ */
+function queryReplay($id, $repfile)
+{
+ //Handelt es sich um Kanes Rache? (Is this Kane's Wrath?)
+ $kw = stristr($repfile, '.KWReplay');
+ //Temporäre Datei zum Schreiben anlegen (Create temp file for writing)
+ $repfile = tempnam(null, $repfile);
+ //vBulletin3-DB Objekt holen (Provide vBulletin3-DB object)
+ global $db;
+ //Falls eine ältere PHP Version als 5.0 vorliegt, dürfen nur PHP4 Funktionen benutzt werden (In case of an older PHP version than 5.0, only use PHP4 functions)
+ if (substr(phpversion(), 0, 1) < 5)
+ {
+  //Datei zum binär-schreiben öffnen (Open file for binary write)
+  $fp = fopen($repfile, 'wb');
+  //Replay aus vBulletin3-Datenbank lesen und lokal speichern [PHP4] (Get replay from vBulletin3-database and save local [PHP4])
+  fwrite($fp, array_shift($db->query_first('SELECT filedata FROM ' . TABLE_PREFIX . 'attachment WHERE attachmentid = ' . intval($id))));
+  fclose($fp);
+ }
+ //Replay aus vBulletin3-Datenbank lesen und lokal speichern [PHP5] (Get replay from vBulletin3-database and save local [PHP5])
+ else file_put_contents($repfile, array_shift($db->query_first('SELECT filedata FROM ' . TABLE_PREFIX . 'attachment WHERE attachmentid = ' . intval($id))));
  //Infos auslesen (Read infos)
  $replay = openReplay($repfile, $kw);
  //Replay wieder löschen (Finally delete replay)
